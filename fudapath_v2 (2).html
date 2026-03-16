@@ -1,0 +1,3692 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FUDAPath – Hành trình sinh viên FPT Đà Nẵng</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ============================================================
+   VARIABLES & RESET
+   ============================================================ */
+    :root {
+      --bg: #080c18;
+      --surf0: #0f1526;
+      --surf1: #141d30;
+      --surf2: #1b2540;
+      --surf3: #222e4d;
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.12);
+      --green: #4ade80;
+      --green2: #22c55e;
+      --blue: #60a5fa;
+      --blue2: #3b82f6;
+      --pink: #f472b6;
+      --yellow: #fbbf24;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+      --radius: 12px;
+      --sidebar: 260px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 45% at 15% 5%, rgba(74, 222, 128, .06) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 55% at 85% 85%, rgba(96, 165, 250, .05) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 40% at 65% 25%, rgba(244, 114, 182, .04) 0%, transparent 60%);
+    }
+
+    /* ============================================================
+   SCROLLBAR
+   ============================================================ */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surf0);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--surf3);
+      border-radius: 4px;
+    }
+
+    /* ============================================================
+   AUTH SCREEN
+   ============================================================ */
+    #auth-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+    }
+
+    .auth-wrap {
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+      animation: fadeUp .5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(.95);
+        opacity: 0
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .auth-logo-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .auth-logo-mark span {
+      font-size: 1.8rem;
+    }
+
+    .auth-logo p {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-top: 4px;
+    }
+
+    .auth-card {
+      background: var(--surf1);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, .5), 0 0 40px rgba(74, 222, 128, .08);
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .auth-tab.active {
+      background: var(--surf3);
+      color: var(--green);
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+      animation: fadeIn .3s ease both;
+    }
+
+    .fg {
+      margin-bottom: 14px;
+    }
+
+    .fg label {
+      display: block;
+      font-size: .78rem;
+      color: var(--muted2);
+      font-weight: 500;
+      margin-bottom: 5px;
+      letter-spacing: .3px;
+    }
+
+    .fg input {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .fg input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(74, 222, 128, .1);
+    }
+
+    .fg input::placeholder {
+      color: var(--muted);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      border: none;
+      border-radius: 9px;
+      color: #080c18;
+      font-family: 'Syne', sans-serif;
+      font-size: .92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      letter-spacing: .3px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(74, 222, 128, .35);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .auth-error {
+      display: none;
+      margin-top: 12px;
+      padding: 9px 13px;
+      background: rgba(239, 68, 68, .1);
+      border: 1px solid rgba(239, 68, 68, .25);
+      border-radius: 8px;
+      font-size: .82rem;
+      color: #fca5a5;
+    }
+
+    /* ============================================================
+   APP SHELL
+   ============================================================ */
+    #app {
+      display: none;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HEADER */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 12, 24, .88);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+    }
+
+    .header-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .header-sep {
+      flex: 1;
+    }
+
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-user span {
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .header-user strong {
+      color: var(--green);
+    }
+
+    .badge-admin {
+      padding: 3px 10px;
+      background: rgba(244, 114, 182, .12);
+      border: 1px solid rgba(244, 114, 182, .25);
+      border-radius: 20px;
+      font-size: .72rem;
+      color: var(--pink);
+      font-weight: 700;
+      display: none;
+    }
+
+    .btn-logout {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-logout:hover {
+      border-color: var(--pink);
+      color: var(--pink);
+    }
+
+    /* LAYOUT */
+    .app-body {
+      display: flex;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar);
+      flex-shrink: 0;
+      background: var(--surf0);
+      border-right: 1px solid var(--border);
+      padding: 14px 10px;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+
+    .sb-section {
+      margin-bottom: 6px;
+    }
+
+    .sb-title {
+      font-size: .67rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      padding: 6px 10px 5px;
+    }
+
+    .sb-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 10px;
+      border-radius: 9px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: .84rem;
+      border: 1px solid transparent;
+      transition: all .18s;
+      position: relative;
+      user-select: none;
+    }
+
+    .sb-item:hover {
+      background: var(--surf2);
+      color: var(--text);
+    }
+
+    .sb-item.active {
+      background: rgba(74, 222, 128, .1);
+      border-color: rgba(74, 222, 128, .18);
+      color: var(--green);
+    }
+
+    .sb-item .ico {
+      font-size: .95rem;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .sb-item .lbl {
+      flex: 1;
+      line-height: 1.2;
+    }
+
+    .sb-item .chev {
+      font-size: .65rem;
+      color: var(--muted);
+      transition: transform .25s;
+      margin-left: auto;
+    }
+
+    .sb-item.open .chev {
+      transform: rotate(90deg);
+    }
+
+    .sb-badge {
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      background: var(--pink);
+      border-radius: 9px;
+      font-size: .68rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sb-collapsible {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height .32s ease;
+    }
+
+    .sb-collapsible.open {
+      max-height: 1200px;
+    }
+
+    .sb-sub {
+      padding-left: 14px;
+    }
+
+    .sb-sub .sb-item {
+      font-size: .8rem;
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      padding: 28px;
+      max-width: calc(100vw - var(--sidebar));
+      overflow-x: hidden;
+    }
+
+    /* PANELS */
+    .panel {
+      display: none;
+      animation: fadeUp .35s ease both;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* WELCOME BANNER */
+    .welcome-banner {
+      background: linear-gradient(135deg, rgba(74, 222, 128, .08), rgba(96, 165, 250, .06));
+      border: 1px solid rgba(74, 222, 128, .18);
+      border-radius: 16px;
+      padding: 22px 26px;
+      margin-bottom: 24px;
+    }
+
+    .welcome-banner h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+
+    .welcome-banner h2 span {
+      color: var(--green);
+    }
+
+    .welcome-banner p {
+      color: var(--muted2);
+      font-size: .88rem;
+      margin-top: 3px;
+    }
+
+    /* HOME TILES */
+    .home-tiles {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .tile {
+      background: var(--surf1);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px;
+      cursor: pointer;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tile::after {
+      content: '→';
+      position: absolute;
+      bottom: 18px;
+      right: 20px;
+      font-size: 1.2rem;
+      color: var(--muted);
+      transition: all .25s;
+    }
+
+    .tile:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 44px rgba(0, 0, 0, .35);
+    }
+
+    .tile:hover::after {
+      transform: translate(3px, -3px);
+      color: var(--green);
+    }
+
+    .tile-ico {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+
+    .tile h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .tile p {
+      color: var(--muted);
+      font-size: .83rem;
+      line-height: 1.6;
+    }
+
+    .tile:nth-child(1) {
+      border-top: 2px solid rgba(74, 222, 128, .3);
+    }
+
+    .tile:nth-child(2) {
+      border-top: 2px solid rgba(96, 165, 250, .3);
+    }
+
+    .tile:nth-child(3) {
+      border-top: 2px solid rgba(244, 114, 182, .3);
+    }
+
+    .tile:nth-child(4) {
+      border-top: 2px solid rgba(251, 191, 36, .3);
+    }
+
+    /* SECTION HEADER */
+    .sec-header {
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sec-header h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .sec-header p {
+      color: var(--muted);
+      font-size: .84rem;
+      margin-top: 3px;
+    }
+
+    /* WELCOME MSG */
+    .welcome-msg {
+      background: linear-gradient(135deg, rgba(96, 165, 250, .07), rgba(74, 222, 128, .05));
+      border-left: 3px solid var(--blue);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      font-size: .88rem;
+      line-height: 1.75;
+    }
+
+    .welcome-msg em {
+      color: var(--green);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* ============================================================
+   STUDY – FILE EXPLORER
+   ============================================================ */
+    .study-layout {
+      display: flex;
+      gap: 16px;
+      min-height: 500px;
+    }
+
+    .study-tree {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--surf1);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      overflow-y: auto;
+      max-height: 70vh;
+    }
+
+    .study-tree-title {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 4px 8px 10px;
+    }
+
+    .study-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Tree nodes */
+    .tree-node {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tree-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      font-size: .82rem;
+      transition: all .15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tree-label:hover {
+      background: var(--surf3);
+    }
+
+    .tree-label.selected {
+      background: rgba(74, 222, 128, .12);
+      color: var(--green);
+    }
+
+    .tree-label .t-ico {
+      font-size: .9rem;
+      flex-shrink: 0;
+    }
+
+    .tree-label .t-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tree-label .t-chev {
+      font-size: .65rem;
+      color: var(--muted);
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+
+    .tree-node.open>.tree-label .t-chev {
+      transform: rotate(90deg);
+    }
+
+    .tree-children {
+      padding-left: 16px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height .3s ease;
+    }
+
+    .tree-node.open>.tree-children {
+      max-height: 2000px;
+    }
+
+    /* Study content area */
+    .study-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .78rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .study-breadcrumb span {
+      color: var(--muted);
+    }
+
+    .study-breadcrumb .bc-sep {
+      color: var(--muted);
+    }
+
+    .study-breadcrumb .bc-active {
+      color: var(--text);
+    }
+
+    .study-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 300px;
+      gap: 12px;
+      color: var(--muted);
+    }
+
+    .study-empty .e-ico {
+      font-size: 3rem;
+      opacity: .4;
+    }
+
+    .study-empty p {
+      font-size: .88rem;
+    }
+
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 15px;
+      font-size: .85rem;
+      transition: all .2s;
+    }
+
+    .file-item:hover {
+      border-color: rgba(96, 165, 250, .3);
+    }
+
+    .file-item .f-ico {
+      color: var(--blue);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .file-item a {
+      color: var(--text);
+      text-decoration: none;
+      flex: 1;
+    }
+
+    .file-item a:hover {
+      color: var(--green);
+    }
+
+    .file-item .f-del {
+      padding: 4px 10px;
+      background: rgba(239, 68, 68, .08);
+      border: 1px solid rgba(239, 68, 68, .2);
+      border-radius: 5px;
+      color: #fca5a5;
+      font-size: .72rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .file-item .f-del:hover {
+      background: rgba(239, 68, 68, .18);
+    }
+
+    .folder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .folder-card {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+    }
+
+    .folder-card:hover {
+      border-color: rgba(251, 191, 36, .3);
+      transform: translateY(-2px);
+    }
+
+    .folder-card .fc-ico {
+      font-size: 2rem;
+      margin-bottom: 7px;
+    }
+
+    .folder-card .fc-name {
+      font-size: .8rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .folder-card .fc-count {
+      font-size: .7rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .folder-card .fc-del {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      background: rgba(239, 68, 68, .1);
+      border: none;
+      color: #fca5a5;
+      font-size: .65rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .folder-card:hover .fc-del {
+      display: flex;
+    }
+
+    /* Admin study form */
+    .admin-box {
+      background: var(--surf2);
+      border: 1px dashed rgba(244, 114, 182, .3);
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 20px;
+    }
+
+    .admin-box h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--pink);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-row .fg {
+      flex: 1;
+      min-width: 130px;
+    }
+
+    .btn-admin {
+      padding: 9px 18px;
+      background: linear-gradient(135deg, var(--pink), #ec4899);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-admin:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(244, 114, 182, .3);
+    }
+
+    .btn-sm {
+      padding: 7px 14px;
+      background: var(--surf3);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--muted2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-sm:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* ============================================================
+   CLUBS
+   ============================================================ */
+    .clubs-categories {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .club-cat-title {
+      font-family: 'Syne', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .clubs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .club-card {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .club-card:hover {
+      border-color: rgba(96, 165, 250, .35);
+      transform: translateY(-2px);
+      background: var(--surf3);
+    }
+
+    .club-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(74, 222, 128, .1);
+      border-radius: 4px;
+      font-size: .7rem;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .club-name {
+      font-size: .85rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .club-desc {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    .club-unread {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      background: var(--pink);
+      border-radius: 10px;
+      font-size: .68rem;
+      font-weight: 800;
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .club-unread.visible {
+      display: flex;
+    }
+
+    /* Club detail */
+    #club-detail-panel .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: .82rem;
+      cursor: pointer;
+      transition: all .2s;
+      margin-bottom: 18px;
+    }
+
+    #club-detail-panel .back-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    /* Posts */
+    .posts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .post-card {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      transition: all .2s;
+      position: relative;
+    }
+
+    .post-card.unread {
+      border-left: 3px solid var(--green);
+    }
+
+    .post-card:hover {
+      border-color: rgba(74, 222, 128, .2);
+    }
+
+    .post-title {
+      font-size: .95rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .post-body {
+      font-size: .84rem;
+      color: var(--muted2);
+      line-height: 1.65;
+    }
+
+    .post-link a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--green);
+      font-size: .8rem;
+      text-decoration: none;
+      margin-top: 8px;
+      border-bottom: 1px solid rgba(74, 222, 128, .25);
+      padding-bottom: 1px;
+    }
+
+    .post-meta {
+      font-size: .73rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .post-pending {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      background: rgba(251, 191, 36, .1);
+      border: 1px solid rgba(251, 191, 36, .25);
+      border-radius: 4px;
+      font-size: .7rem;
+      color: var(--yellow);
+      margin-bottom: 8px;
+    }
+
+    .approve-btn {
+      padding: 4px 11px;
+      background: rgba(74, 222, 128, .1);
+      border: 1px solid rgba(74, 222, 128, .25);
+      border-radius: 6px;
+      color: var(--green);
+      font-size: .75rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .approve-btn:hover {
+      background: rgba(74, 222, 128, .2);
+    }
+
+    .reject-btn {
+      padding: 4px 11px;
+      background: rgba(239, 68, 68, .08);
+      border: 1px solid rgba(239, 68, 68, .2);
+      border-radius: 6px;
+      color: #fca5a5;
+      font-size: .75rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .reject-btn:hover {
+      background: rgba(239, 68, 68, .18);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .post-form {
+      background: var(--surf2);
+      border: 1px dashed rgba(244, 114, 182, .3);
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .post-form.visible {
+      display: block;
+    }
+
+    .post-form h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--pink);
+      margin-bottom: 14px;
+    }
+
+    textarea.fg-ta {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      outline: none;
+      resize: vertical;
+      transition: border-color .2s;
+    }
+
+    textarea.fg-ta:focus {
+      border-color: var(--green);
+    }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .empty-state .ei {
+      font-size: 2.5rem;
+      opacity: .4;
+    }
+
+    .empty-state p {
+      font-size: .85rem;
+    }
+
+    /* ============================================================
+   INFO SECTIONS
+   ============================================================ */
+    /* Instruments */
+    .instruments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+
+    .instr-card {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all .25s;
+    }
+
+    .instr-card:hover {
+      border-color: rgba(244, 114, 182, .3);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, .3);
+    }
+
+    .instr-img {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      background: var(--surf3);
+    }
+
+    .instr-body {
+      padding: 12px;
+    }
+
+    .instr-name {
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .instr-desc {
+      font-size: .75rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Vovinam */
+    .vo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .vo-card {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      text-align: center;
+      transition: all .25s;
+    }
+
+    .vo-card:hover {
+      border-color: rgba(74, 222, 128, .3);
+      transform: translateY(-3px);
+    }
+
+    .vo-card .v-ico {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .vo-card h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .vo-card p {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* English */
+    .eng-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .eng-card {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .eng-card h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 14px;
+    }
+
+    .luk-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: .82rem;
+      margin-bottom: 8px;
+    }
+
+    .luk-num {
+      font-weight: 700;
+      color: var(--green);
+      min-width: 48px;
+      font-family: 'Syne', sans-serif;
+    }
+
+    /* Resources */
+    .res-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+    }
+
+    .res-card {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all .25s;
+    }
+
+    .res-card:hover {
+      border-color: rgba(74, 222, 128, .2);
+      transform: translateY(-2px);
+    }
+
+    .res-card .r-ico {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .res-card h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .res-card p {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+   CHAT
+   ============================================================ */
+    .chat-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 380px;
+      height: 500px;
+      background: var(--surf1);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .chat-container.minimized {
+      height: 60px;
+    }
+
+    .chat-container:hover {
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .chat-toggle {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: var(--green);
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 4px 20px rgba(74, 222, 128, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .chat-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 25px rgba(74, 222, 128, 0.6);
+    }
+
+    .chat-toggle.hidden {
+      display: none;
+    }
+
+    /* Hide chat widget by default, show only toggle button */
+    #chat-widget {
+      display: none;
+    }
+
+    /* Chat bubble style */
+    .chat-toggle {
+      display: none; /* Hidden by default, shown after initialization */
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .chat-toggle::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle, rgba(74, 222, 128, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: ripple 3s infinite;
+    }
+
+    @keyframes ripple {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    .chat-hdr {
+      padding: 14px 18px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .chat-hdr-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-control-btn {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .chat-control-btn:hover {
+      background: var(--surf2);
+      color: var(--text);
+    }
+
+    .chat-control-btn.close:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .chat-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .msg-row {
+      display: flex;
+      gap: 8px;
+      max-width: 78%;
+    }
+
+    .msg-row.me {
+      flex-direction: row-reverse;
+      align-self: flex-end;
+    }
+
+    .msg-av {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--surf3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      flex-shrink: 0;
+    }
+
+    .msg-bubble {
+      padding: 9px 13px;
+      border-radius: 11px;
+      font-size: .84rem;
+      line-height: 1.6;
+    }
+
+    .msg-row .msg-bubble {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 3px 11px 11px 11px;
+    }
+
+    .msg-row.me .msg-bubble {
+      background: rgba(74, 222, 128, .1);
+      border: 1px solid rgba(74, 222, 128, .18);
+      border-radius: 11px 3px 11px 11px;
+      color: var(--green);
+    }
+
+    .msg-meta {
+      font-size: .7rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .msg-row.me .msg-meta {
+      text-align: right;
+    }
+
+    .chat-input-wrap {
+      display: flex;
+      gap: 9px;
+      padding: 12px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-inp {
+      flex: 1;
+      padding: 9px 13px;
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .chat-inp:focus {
+      border-color: var(--green);
+    }
+
+    .chat-inp::placeholder {
+      color: var(--muted);
+    }
+
+    .btn-send {
+      padding: 9px 16px;
+      background: var(--green);
+      border: none;
+      border-radius: 9px;
+      color: var(--bg);
+      font-family: 'Syne', sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-send:hover {
+      box-shadow: 0 4px 14px rgba(74, 222, 128, .35);
+      transform: translateY(-1px);
+    }
+
+    /* ============================================================
+   TOAST
+   ============================================================ */
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 999;
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 12px 18px;
+      font-size: .85rem;
+      max-width: 300px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .4);
+      animation: fadeUp .25s ease both;
+    }
+
+    .toast.ok {
+      border-color: rgba(74, 222, 128, .3);
+      color: var(--green);
+    }
+
+    .toast.err {
+      border-color: rgba(239, 68, 68, .3);
+      color: #fca5a5;
+    }
+
+    /* DIVIDER */
+    .div {
+      height: 1px;
+      background: var(--border);
+      margin: 18px 0;
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 14px;
+        max-width: 100vw;
+      }
+
+      .home-tiles,
+      .eng-grid,
+      .vo-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .study-layout {
+        flex-direction: column;
+      }
+
+      .study-tree {
+        width: 100%;
+        max-height: 200px;
+      }
+    }
+
+    /* Tabs inside panels */
+    .panel-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+
+    .panel-tab {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      font-weight: 500;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .panel-tab.active {
+      background: var(--surf3);
+      color: var(--green);
+    }
+
+    /* Tag */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 9px;
+      border-radius: 5px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    .tag-green {
+      background: rgba(74, 222, 128, .1);
+      color: var(--green);
+    }
+
+    .tag-blue {
+      background: rgba(96, 165, 250, .1);
+      color: var(--blue);
+    }
+
+    .tag-pink {
+      background: rgba(244, 114, 182, .12);
+      color: var(--pink);
+    }
+
+    /* Study ngành list */
+    .major-group {
+      margin-bottom: 20px;
+    }
+
+    .major-group-title {
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 4px 8px;
+      margin-bottom: 6px;
+    }
+
+    .major-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: .82rem;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--muted2);
+    }
+
+    .major-item:hover {
+      background: var(--surf3);
+      color: var(--text);
+    }
+
+    .major-item.active {
+      background: rgba(74, 222, 128, .1);
+      color: var(--green);
+    }
+
+    .major-item .m-ico {
+      font-size: .85rem;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ====================================================
+     AUTH SCREEN
+     ==================================================== -->
+  <div id="auth-screen">
+    <div class="auth-wrap">
+      <div class="auth-logo">
+        <div class="auth-logo-mark"><span>🎓</span> FUDAPath</div>
+        <p>Hành trình đồng hành sinh viên FPT Đà Nẵng</p>
+      </div>
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="switchTab('login')">Đăng nhập</button>
+          <button class="auth-tab" onclick="switchTab('register')">Đăng ký</button>
+        </div>
+        <!-- Login -->
+        <div id="login-form" class="auth-form active">
+          <div class="fg"><label>Bút danh</label><input type="text" id="l-alias" placeholder="Nhập bút danh"></div>
+          <div class="fg"><label>Email</label><input type="email" id="l-email"
+              placeholder="Nhập Email hoặc nova145@gmail.com"></div>
+          <div class="fg"><label>Mật khẩu</label><input type="password" id="l-pass" placeholder="••••••••"
+              onkeydown="if(event.key==='Enter')doLogin()"></div>
+          <div style="text-align:right; margin-bottom:12px;"><a href="#" onclick="switchTab('forgot')"
+              style="color:var(--green); font-size:0.75rem; text-decoration:none;">Quên mật khẩu?</a></div>
+          <button class="btn-primary" onclick="doLogin()">Đăng nhập</button>
+          <div class="auth-error" id="l-err"></div>
+        </div>
+        <!-- Register -->
+        <div id="register-form" class="auth-form">
+          <div class="fg"><label>Họ và tên</label><input type="text" id="r-name" placeholder="Nguyễn Văn A"></div>
+          <div class="fg"><label>Bút danh</label><input type="text" id="r-alias" placeholder="nick_của_bạn"></div>
+          <div class="fg"><label>Email</label><input type="email" id="r-email" placeholder="email@example.com"></div>
+          <div class="fg"><label>Mật khẩu <span style="color:var(--muted);font-size:.74rem">(≥6 ký
+                tự)</span></label><input type="password" id="r-pass" placeholder="••••••••"></div>
+          <button class="btn-primary" onclick="doRegister()">Tạo tài khoản</button>
+          <div class="auth-error" id="r-err"></div>
+        </div>
+        <!-- Forgot Password -->
+        <div id="forgot-form" class="auth-form">
+          <div class="fg"><label>Email đã đăng ký</label><input type="email" id="f-email"
+              placeholder="Nhập Email để lấy lại mật khẩu"></div>
+          <button class="btn-primary" onclick="doForgot()">Lấy lại mật khẩu</button>
+          <div style="text-align:center; margin-top:14px;"><a href="#" onclick="switchTab('login')"
+              style="color:var(--muted); font-size:0.8rem; text-decoration:none;">← Quay lại đăng nhập</a></div>
+          <div class="auth-error" id="f-err"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+     APP
+     ==================================================== -->
+  <div id="app">
+    <header class="app-header">
+      <div class="header-logo">🎓 FUDAPath</div>
+      <div class="header-sep"></div>
+      <div class="header-user">
+        <span id="admin-badge" class="badge-admin">👑 ADMIN</span>
+        <span>Xin chào, <strong id="user-display"></strong></span>
+        <button class="btn-logout" onclick="logout()">Đăng xuất</button>
+      </div>
+    </header>
+
+    <div class="app-body">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sb-section">
+          <div class="sb-title">Điều hướng</div>
+          <div class="sb-item active" onclick="showPanel('home')" id="snav-home">
+            <span class="ico">🏠</span><span class="lbl">Trang chủ</span>
+          </div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-title">Học tập</div>
+          <div class="sb-item" onclick="showPanel('study')" id="snav-study">
+            <span class="ico">📚</span><span class="lbl">Tài liệu ngành học</span>
+          </div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-title">Trải nghiệm</div>
+          <div class="sb-item" id="snav-clubs-parent" onclick="toggleSb('sb-clubs',this)">
+            <span class="ico">🏆</span><span class="lbl">Câu lạc bộ</span><span class="chev">›</span>
+          </div>
+          <div class="sb-collapsible" id="sb-clubs">
+            <div class="sb-sub" id="sb-clubs-list"><!-- rendered by JS --></div>
+          </div>
+          <div class="sb-item" id="snav-events-parent" onclick="toggleSb('sb-events',this)">
+            <span class="ico">🎪</span><span class="lbl">Sự kiện</span><span class="chev">›</span>
+          </div>
+          <div class="sb-collapsible" id="sb-events">
+            <div class="sb-sub">
+              <div class="sb-item" onclick="showPanel('ev-abroad')"><span class="ico">✈️</span><span class="lbl">Nước
+                  ngoài</span></div>
+              <div class="sb-item" onclick="showPanel('ev-school')"><span class="ico">🏫</span><span class="lbl">Trong
+                  trường</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-title">Một số thông tin</div>
+          <div class="sb-item" onclick="showPanel('instruments')"><span class="ico">🎵</span><span class="lbl">Nhạc cụ
+              dân tộc</span></div>
+          <div class="sb-item" onclick="showPanel('vovinam')"><span class="ico">🥋</span><span class="lbl">Võ
+              Vovinam</span></div>
+          <div class="sb-item" onclick="showPanel('english')"><span class="ico">🌐</span><span class="lbl">Tiếng Anh dự
+              bị</span></div>
+          <div class="sb-item" onclick="showPanel('resources')"><span class="ico">💻</span><span class="lbl">Tài nguyên
+              cơ sở của trường</span></div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-title">Cộng đồng</div>
+          <div class="sb-item" onclick="showPanel('chat')"><span class="ico">🤖</span><span class="lbl">Chatbot</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main">
+
+        <!-- HOME -->
+        <div class="panel active" id="panel-home">
+          <div class="welcome-banner">
+            <h2>Chào mừng, <span id="welcome-name"></span>! 👋</h2>
+            <p>FUDAPath – Nền tảng hỗ trợ sinh viên năm nhất FPT Đà Nẵng hòa nhập và phát triển</p>
+          </div>
+          <div class="home-tiles">
+            <div class="tile" onclick="showPanel('study')">
+              <div class="tile-ico">📚</div>
+              <h3>Học tập</h3>
+              <p>Tài liệu, đề thi theo ngành và học kỳ, được tổ chức dạng thư mục</p>
+            </div>
+            <div class="tile" onclick="showPanel('clubs')">
+              <div class="tile-ico">🏆</div>
+              <h3>Trải nghiệm</h3>
+              <p>CLB, sự kiện trong và ngoài trường – cơ hội kết nối và phát triển bản thân</p>
+            </div>
+            <div class="tile" onclick="showPanel('instruments')">
+              <div class="tile-ico">🎵</div>
+              <h3>Một số thông tin</h3>
+              <p>Nhạc cụ dân tộc, võ thuật, tiếng Anh và tài nguyên cơ sở của trường</p>
+            </div>
+            <div class="tile" onclick="showPanel('chat')">
+              <div class="tile-ico">🤖</div>
+              <h3>Chatbot</h3>
+              <p>Nơi đây là nơi trò chuyện, đặt câu hỏi giữa các sinh viên và admin</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDY -->
+        <div class="panel" id="panel-study">
+          <div class="sec-header">
+            <h2>📚 Tài liệu ngành học</h2>
+          </div>
+          <div class="welcome-msg">
+            Chào các bạn sinh viên, đây là mục học tập, nơi đăng tải các đề thi của các năm trước. Và mình cũng lưu ý
+            các bạn rằng, đây chỉ là tài liệu tham khảo, nó giúp các bạn luyện đề và có cái nhìn tổng quát về đề thi
+            thôi nhé. Chúc các bạn học tốt và thi tốt.
+          </div>
+          <div class="study-layout">
+            <!-- Tree -->
+            <div class="study-tree" id="study-tree">
+              <div class="study-tree-title">Cây thư mục</div>
+              <div id="tree-root"><!-- JS rendered --></div>
+            </div>
+            <!-- Content -->
+            <div class="study-content">
+              <div id="study-breadcrumb" class="study-breadcrumb"></div>
+              <div id="study-view">
+                <div class="study-empty">
+                  <div class="e-ico">📂</div>
+                  <p>Chọn ngành học từ cây thư mục bên trái để bắt đầu</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLUBS (list view) -->
+        <div class="panel" id="panel-clubs">
+          <div class="sec-header">
+            <h2>🏆 Câu lạc bộ</h2>
+          </div>
+          <div class="welcome-msg">
+            Chào mừng các bạn đến với thế giới câu lạc bộ đầy màu sắc của trường đại học FPT Đà Nẵng này. Nơi đây đăng
+            tải lại các sự kiện, thông tin của các câu lạc. Nó giúp các bạn biết được nhiều sự kiện chỉ với một cái
+            click chuột. Chúc các bạn có nhiều trải nghiệm đáng nhớ trong thời sinh viên này.
+          </div>
+          <div id="clubs-list-view"><!-- rendered by JS --></div>
+        </div>
+
+        <!-- CLUB DETAIL -->
+        <div class="panel" id="panel-club-detail">
+          <button class="back-btn" onclick="showPanel('clubs')"
+            style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;background:var(--surf2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:.82rem;cursor:pointer;transition:all .2s;margin-bottom:18px;">←
+            Quay lại danh sách CLB</button>
+          <div class="sec-header" id="club-detail-header"></div>
+          <div id="club-detail-posts" class="posts-list"></div>
+          <div id="club-post-form" class="post-form">
+            <h4>⚙️ Đăng bài cho CLB này</h4>
+            <div class="fg"><label>Tiêu đề</label><input type="text" id="cpf-title"
+                placeholder="Tên bài đăng / sự kiện..."></div>
+            <div class="fg"><label>Nội dung</label><textarea id="cpf-body" class="fg-ta" rows="3"
+                placeholder="Nội dung chi tiết..."></textarea></div>
+            <div class="fg"><label>Link nguồn (tuỳ chọn)</label><input type="text" id="cpf-link"
+                placeholder="https://..."></div>
+            <button class="btn-admin" onclick="submitClubPost()">📤 Đăng bài</button>
+          </div>
+        </div>
+
+        <!-- EVENT ABROAD -->
+        <div class="panel" id="panel-ev-abroad">
+          <div class="sec-header">
+            <h2>✈️ Sự kiện – Nước ngoài</h2>
+          </div>
+          <div class="welcome-msg">
+            Nếu bạn đang tìm các chuyến trao đổi học tập hay kì OJT nước ngoài, thì nơi đây chính là chân ái. Nơi đây
+            mình sẽ đăng tải lại các thông tin đi nước ngoài của trường mình để các bạn theo dõi và lựa chọn những
+            chuyến đi hợp với mình. Chúc các bạn có những trải nghiệm đẹp ở nước ngoài
+          </div>
+          <div id="abroad-posts" class="posts-list"></div>
+          <div id="abroad-post-form" class="post-form">
+            <h4>⚙️ Đăng thông tin nước ngoài</h4>
+            <div class="fg"><label>Tiêu đề chương trình</label><input type="text" id="apf-title"
+                placeholder="Tên chương trình trao đổi..."></div>
+            <div class="fg"><label>Nội dung</label><textarea id="apf-body" class="fg-ta" rows="3"
+                placeholder="Mô tả chương trình..."></textarea></div>
+            <div class="fg"><label>Link chi tiết</label><input type="text" id="apf-link" placeholder="https://...">
+            </div>
+            <button class="btn-admin" onclick="submitPost('abroad')">📤 Đăng bài</button>
+          </div>
+        </div>
+
+        <!-- EVENT SCHOOL -->
+        <div class="panel" id="panel-ev-school">
+          <div class="sec-header">
+            <h2>🏫 Sự kiện – Trong trường</h2>
+          </div>
+          <div class="welcome-msg">
+            Mỗi sự kiện trong trường không chỉ là một hoạt động, mà là một kỷ niệm được tạo nên cùng nhau<br>
+            Hãy mạnh dạn tham gia, trải nghiệm và kết nối – vì thanh xuân đại học đẹp nhất khi bạn không đứng ngoài
+            cuộc.<br>
+            Biết đâu, chính một sự kiện hôm nay sẽ trở thành ký ức bạn nhớ mãi sau này.<br><br><br>
+            Nơi đây mình đăng tải lại các sự kiện của trường để bạn theo dõi
+          </div>
+          <div id="school-posts" class="posts-list"></div>
+          <div id="school-post-form" class="post-form">
+            <h4>⚙️ Đăng sự kiện trong trường</h4>
+            <div class="fg"><label>Tiêu đề</label><input type="text" id="spf-title" placeholder="Tên sự kiện..."></div>
+            <div class="fg"><label>Nội dung</label><textarea id="spf-body" class="fg-ta" rows="3"
+                placeholder="Mô tả sự kiện..."></textarea></div>
+            <div class="fg"><label>Link (tuỳ chọn)</label><input type="text" id="spf-link" placeholder="https://...">
+            </div>
+            <button class="btn-admin" onclick="submitPost('school')">📤 Đăng bài</button>
+          </div>
+        </div>
+
+        <!-- INSTRUMENTS -->
+        <div class="panel" id="panel-instruments">
+          <div class="sec-header">
+            <h2>🎵 Nhạc cụ dân tộc</h2>
+          </div>
+          <div class="welcome-msg">
+            Chào mừng các bạn sinh viên năm nhất<br>
+            Việc chọn sáo, đàn tranh, đàn nhị, đàn bầu, đàn tỳ bà hay đàn nguyệt không chỉ là chọn một môn học, mà là
+            chọn một trải nghiệm mới cho chính mình.<br>
+            Đừng lo nếu bạn chưa từng học nhạc – chỉ cần bạn sẵn sàng thử và cảm nhận.<br>
+            Hãy chọn nhạc cụ khiến bạn rung động ngay từ lần đầu tiên nghe thấy<br>
+            Nếu bạn yêu sự bay bổng và tự do → hãy thử sáo.<br><br>
+            Nếu bạn thích sự mềm mại, sâu lắng → đàn tranh có thể dành cho bạn.<br><br>
+            Nếu bạn đồng cảm với những thanh âm da diết → đàn nhị sẽ chạm đến trái tim bạn.<br><br>
+            Nếu bạn muốn trải nghiệm âm thanh độc đáo, rất Việt Nam → đàn bầu là một lựa chọn thú vị.<br><br>
+            Nếu bạn yêu nét cổ điển, tao nhã → đàn tỳ bà hoặc đàn nguyệt sẽ đưa bạn về không gian nghệ thuật truyền
+            thống.<br>
+            Chúc bạn tìm được “thanh âm” của riêng mình
+          </div>
+          <div class="instruments-grid">
+            <div class="instr-card">
+              <div class="instr-img">🎋</div>
+              <div class="instr-body">
+                <div class="instr-name">Sáo</div>
+                <div class="instr-desc">Nhạc cụ hơi truyền thống, thanh âm bay bổng tự do. Phù hợp cho tâm hồn phóng
+                  khoáng.</div>
+              </div>
+            </div>
+            <div class="instr-card">
+              <div class="instr-img">🎵</div>
+              <div class="instr-body">
+                <div class="instr-name">Đàn Tranh</div>
+                <div class="instr-desc">16 dây, âm thanh mềm mại sâu lắng. Đặc trưng của âm nhạc dân tộc Việt Nam.</div>
+              </div>
+            </div>
+            <div class="instr-card">
+              <div class="instr-img">🎻</div>
+              <div class="instr-body">
+                <div class="instr-name">Đàn Nhị</div>
+                <div class="instr-desc">Đàn kéo 2 dây, tiếng da diết gần gũi với giọng người. Chạm đến trái tim.</div>
+              </div>
+            </div>
+            <div class="instr-card">
+              <div class="instr-img">🎶</div>
+              <div class="instr-body">
+                <div class="instr-name">Đàn Bầu</div>
+                <div class="instr-desc">Đàn một dây độc đáo, âm thanh rất riêng của người Việt. Không nơi nào khác có.
+                </div>
+              </div>
+            </div>
+            <div class="instr-card">
+              <div class="instr-img">🪕</div>
+              <div class="instr-body">
+                <div class="instr-name">Đàn Tỳ Bà</div>
+                <div class="instr-desc">4 dây cổ điển, tao nhã. Mang phong vị nghệ thuật truyền thống lâu đời.</div>
+              </div>
+            </div>
+            <div class="instr-card">
+              <div class="instr-img">🌕</div>
+              <div class="instr-body">
+                <div class="instr-name">Đàn Nguyệt</div>
+                <div class="instr-desc">Hình tròn như mặt trăng, âm thanh phong phú và đầy cảm xúc sâu lắng.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VOVINAM -->
+        <div class="panel" id="panel-vovinam">
+          <div class="sec-header">
+            <h2>🥋 Võ Vovinam</h2>
+          </div>
+          <div class="welcome-msg">
+            Chào mừng bạn đến với hành trình Vovinam<br>
+            Võ 1 giúp bạn xây dựng nền tảng căn bản và rèn luyện thể lực.<br>
+            Võ 2 thử thách bạn với chiến lược và đối kháng thực tế.<br>
+            Võ 3 mang đến sự kết hợp giữa võ nhạc và bài quyền nhập môn đầy cảm hứng.<br>
+            Dù bạn bắt đầu từ đâu, điều quan trọng nhất là tinh thần kỷ luật và sự kiên trì.<br>
+            Hãy chọn và sẵn sàng chinh phục giới hạn của chính mình
+          </div>
+          <div class="vo-grid">
+            <div class="vo-card">
+              <div class="v-ico">🌱</div>
+              <h4>Võ 1</h4>
+              <p>Xây dựng <strong>nền tảng căn bản</strong> và rèn luyện thể lực. Phù hợp với người hoàn toàn mới bắt
+                đầu.</p>
+            </div>
+            <div class="vo-card">
+              <div class="v-ico">⚡</div>
+              <h4>Võ 2</h4>
+              <p>Thử thách với <strong>chiến lược và đối kháng thực tế</strong>. Nâng cao kỹ năng phòng thủ và tấn công.
+              </p>
+            </div>
+            <div class="vo-card">
+              <div class="v-ico">🎶</div>
+              <h4>Võ 3</h4>
+              <p>Kết hợp giữa <strong>võ nhạc và bài quyền nhập môn</strong> – đầy nghệ thuật và cảm hứng.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENGLISH -->
+        <div class="panel" id="panel-english">
+          <div class="sec-header">
+            <h2>🌐 Tiếng Anh dự bị</h2>
+          </div>
+          <div class="welcome-msg">
+            <p><strong>LUK</strong><br>
+              Chào các bạn, trường mình có bài test tiếng anh đầu năm.<br>
+              Nếu điểm của bạn không được khả quan thì chúng ta sẽ học LUK.<br>
+              Đây là Little United Kings (LUK) gồm 6 level nhưng campus Đà Nẵng chỉ học 4 level<br>
+              Đây là chương trình học của K20<br>
+              LUK 1: học giao tiếp hội thoại<br>
+              LUK 2: đọc news viết news thuyết trình<br>
+              LUK 3: vẫn đọc news thuyết trình nhưng về cuối sẽ học về bộ não hoạt động và đó là nền móng đi tranh
+              luận,<br>
+              LUK 4: là tranh luận nghiên cứu giải quyết vấn đề<br>
+              Chương trình học của LUK luôn thay đổi vì thế chương trình của K20 cũng chỉ là tham khảo và mình sẽ luôn
+              cập nhật khi có thông tin</p>
+            <div style="height:1px;background:var(--border);margin:14px 0;"></div>
+            <p><strong>ENT</strong><br>
+              Nếu điểm đầu vào của bạn cao thì sẽ học ENT304 và ENT403<br>
+              Ở đây bạn học cả 4 kĩ năng nghe, nói, đọc, viết và có sách lấy từ thư viên.</p>
+          </div>
+        </div>
+
+        <!-- RESOURCES -->
+        <div class="panel" id="panel-resources">
+          <div class="sec-header">
+            <h2>💻 Tài nguyên cơ sở trường</h2>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="r-ico">📱</div>
+              <h4>EduNext – Hệ thống học trực tuyến chính của FPTU</h4>
+              <p>Đây là nền tảng đào tạo trực tuyến mà sinh viên FPT University sử dụng để truy cập bài giảng, bài tập,
+                tài liệu môn học và quản lý quá trình học tập theo lộ trình cá nhân.</p>
+            </div>
+            <div class="res-card">
+              <div class="r-ico">🌐</div>
+              <h4>Coursera (qua tài khoản FPTU)</h4>
+              <p>FPT University cung cấp tài khoản Coursera miễn phí cho sinh viên để học các khóa học quốc tế chất
+                lượng cao từ các trường top thế giới (như Stanford, MIT, Yale…); nhiều môn học của FPT cũng yêu cầu SV
+                hoàn thành nội dung trên Coursera trong chương trình học.</p>
+            </div>
+            <div class="res-card">
+              <div class="r-ico">📚</div>
+              <h4>Thư viện nội bộ</h4>
+              <p>Sinh viên có thể truy cập tài liệu chuyên ngành, sách điện tử và nghiên cứu thông qua các hệ thống thư
+                viện nội bộ:<br>library.fpt.edu.vn – thư viện điện tử của trường</p>
+            </div>
+            <div class="res-card">
+              <div class="r-ico">🎓</div>
+              <h4>FAP – FPT Academic Portal (Cổng thông tin đào tạo)</h4>
+              <p>Hệ thống học tập & thi chính của SV FPT<br>Dùng để:<br>Xem lịch học, lịch thi<br>Xem bảng điểm, điểm
+                danh<br>Xem kết quả thi<br>Nộp đơn học vụ (học lại, cải thiện, bảo lưu…)<br>Xem học phí<br>Xem đề cương
+                môn học<br>Nộp chứng chỉ Coursera (nếu môn yêu cầu)<br>Thi & kiểm tra trên FAP:<br>Lịch thi (Midterm /
+                Final / Resit)<br>Hình thức thi<br>Điều kiện dự thi (điểm danh, MOOC)</p>
+            </div>
+            <div class="res-card">
+              <div class="r-ico">🔒</div>
+              <h4>SEB (Safe Exam Browser)</h4>
+              <p>Hệ thống thi trên máy tính với trình duyệt bị khóa, đảm bảo an toàn và chống gian lận; thường dùng cho
+                midterm và final, hỗ trợ mở đề và nộp bài trong môi trường kiểm soát.</p>
+            </div>
+            <div class="res-card">
+              <div class="r-ico">💡</div>
+              <h4>EOS (Exam Online System)</h4>
+              <p>Nền tảng thi trực tuyến nội bộ của FPT University, hỗ trợ trắc nghiệm và tự luận, dùng cho kiểm tra và
+                thi online; liên kết với FAP để quản lý lịch thi và kết quả.</p>
+            </div>
+            <div class="res-card" style="grid-column:span 2">
+              <div class="r-ico">🔍</div>
+              <h4>Khác :</h4>
+              <p>Google Scholar – tìm kiếm bài báo, luận văn, sách học thuật miễn phí.<br>Docsity / Studocu → note, bài
+                tập, đề mẫu<br>OpenStax → sách giáo khoa miễn phí</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHAT -->
+        <div class="panel" id="panel-chat" style="display: none;">
+          <div class="sec-header">
+            <h2>💬 Chatbot</h2>
+          </div>
+          <div class="welcome-msg">
+            Chatbot đã được chuyển sang chế độ nổi. Nhấn nút 🤖 ở góc dưới bên phải để mở chat.
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Floating Chat Widget -->
+  <button class="chat-toggle" id="chat-toggle" onclick="toggleChat()">🤖</button>
+  
+  <div class="chat-container" id="chat-widget">
+    <div class="chat-hdr" onclick="toggleMinimize()">
+      <div class="chat-hdr-left">
+        <div class="chat-dot"></div>
+        Phòng chat FUDAPath
+      </div>
+      <div class="chat-controls">
+        <button class="chat-control-btn minimize" onclick="toggleMinimize(event)">−</button>
+        <button class="chat-control-btn close" onclick="closeChat(event)">×</button>
+      </div>
+    </div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-input-wrap">
+      <input class="chat-inp" id="chat-inp" placeholder="Nhập tin nhắn..."
+        onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="btn-send" onclick="sendChat()">Gửi</button>
+    </div>
+    <div id="admin-pending-chats" style="display:none;margin-top:16px">
+      <div class="admin-box">
+        <h4>⚙️ Tin nhắn chờ duyệt</h4>
+        <div id="pending-chat-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+     JAVASCRIPT
+     ==================================================== -->
+  <script>
+    // ============================================================
+    // DATA STORE
+    // ============================================================
+    const DB = {
+      users: JSON.parse(localStorage.getItem('fp2_users') || '[]'),
+      fileTree: JSON.parse(localStorage.getItem('fp2_filetree') || '{}'),
+      clubPosts: JSON.parse(localStorage.getItem('fp2_cposts') || '{}'),
+      abroadPosts: JSON.parse(localStorage.getItem('fp2_abroad') || '[]'),
+      schoolPosts: JSON.parse(localStorage.getItem('fp2_school') || '[]'),
+      chat: JSON.parse(localStorage.getItem('fp2_chat') || '[]'),
+      readClubs: JSON.parse(localStorage.getItem('fp2_readclubs') || '{}'), // {alias: {clubId: timestamp}}
+    };
+    function persist() {
+      localStorage.setItem('fp2_users', JSON.stringify(DB.users));
+      localStorage.setItem('fp2_filetree', JSON.stringify(DB.fileTree));
+      localStorage.setItem('fp2_cposts', JSON.stringify(DB.clubPosts));
+      localStorage.setItem('fp2_abroad', JSON.stringify(DB.abroadPosts));
+      localStorage.setItem('fp2_school', JSON.stringify(DB.schoolPosts));
+      localStorage.setItem('fp2_chat', JSON.stringify(DB.chat));
+      localStorage.setItem('fp2_readclubs', JSON.stringify(DB.readClubs));
+    }
+
+    let CU = null; // current user
+    let isAdmin = false;
+    let currentClubId = null;
+    let studyPath = []; // breadcrumb path array of node ids
+
+    // ============================================================
+    // AUTH
+    // ============================================================
+    function switchTab(t) {
+      document.querySelectorAll('.auth-tab').forEach((el, i) => el.classList.toggle('active', (i === 0 && t === 'login') || (i === 1 && t === 'register')));
+      document.getElementById('login-form').classList.toggle('active', t === 'login');
+      document.getElementById('register-form').classList.toggle('active', t === 'register');
+      const forgotForm = document.getElementById('forgot-form');
+      if (forgotForm) forgotForm.classList.toggle('active', t === 'forgot');
+      hideErr('l-err'); hideErr('r-err'); if (document.getElementById('f-err')) hideErr('f-err');
+    }
+    function showErr(id, msg) { const e = document.getElementById(id); e.textContent = msg; e.style.display = 'block'; }
+    function hideErr(id) { document.getElementById(id).style.display = 'none'; }
+
+    function doLogin() {
+      const alias = val('l-alias'), email = val('l-email'), pass = val('l-pass');
+      if (!alias || !email || !pass) return showErr('l-err', 'Vui lòng nhập đầy đủ thông tin.');
+      if (alias === 'NOVA' && email === 'nova145@gmail.com' && pass === 'NOVA145') {
+        CU = { alias: 'NOVA', name: 'Admin NOVA', email: 'nova145@gmail.com' }; isAdmin = true; enterApp(); return;
+      }
+      const u = DB.users.find(u => u.alias === alias && u.email === email && u.pass === pass);
+      if (!u) return showErr('l-err', 'Thông tin đăng nhập không đúng.');
+      CU = u; isAdmin = false; enterApp();
+    }
+    function doForgot() {
+      const fval = val('f-email');
+      if (!fval) return showErr('f-err', 'Vui lòng nhập Email.');
+      const u = DB.users.find(u => u.email === fval);
+      if (!u) return showErr('f-err', 'Không tìm thấy tài khoản với Email này.');
+      alert('Mật khẩu của bạn là: ' + u.pass);
+      switchTab('login');
+    }
+    function doRegister() {
+      const name = val('r-name'), alias = val('r-alias'), email = val('r-email'), pass = val('r-pass');
+      if (!name || !alias || !email || !pass) return showErr('r-err', 'Vui lòng nhập đầy đủ thông tin.');
+      if (pass.length < 6) return showErr('r-err', 'Mật khẩu tối thiểu 6 ký tự.');
+      if (DB.users.find(u => u.alias === alias)) return showErr('r-err', 'Bút danh đã được sử dụng.');
+      if (DB.users.find(u => u.email === email)) return showErr('r-err', 'Email đã được đăng ký.');
+      DB.users.push({ name, alias, email, pass }); persist();
+      toast('Đăng ký thành công! Hãy đăng nhập.', 'ok');
+      switchTab('login');
+    }
+    function enterApp() {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('user-display').textContent = CU.alias;
+      document.getElementById('welcome-name').textContent = CU.alias;
+      if (isAdmin) {
+        document.getElementById('admin-badge').style.display = 'inline-flex';
+        document.getElementById('abroad-post-form').classList.add('visible');
+        document.getElementById('school-post-form').classList.add('visible');
+        document.getElementById('admin-pending-chats').style.display = 'block';
+      }
+      buildStudyTree();
+      renderClubList();
+      renderSbClubs();
+      renderPosts('abroad');
+      renderPosts('school');
+      renderChat();
+      showPanel('home');
+    }
+    function logout() {
+      CU = null; isAdmin = false;
+      document.getElementById('auth-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('admin-badge').style.display = 'none';
+      ['l-alias', 'l-email', 'l-pass'].forEach(id => document.getElementById(id).value = '');
+    }
+    function val(id) { return document.getElementById(id).value.trim(); }
+
+    // ============================================================
+    // PANELS
+    // ============================================================
+    function showPanel(id) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      const p = document.getElementById('panel-' + id);
+      if (p) p.classList.add('active');
+      // highlight sidebar
+      document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+      const sn = document.getElementById('snav-' + id);
+      if (sn) sn.classList.add('active');
+    }
+    function toggleSb(id, el) {
+      const col = document.getElementById(id);
+      col.classList.toggle('open');
+      el.classList.toggle('open');
+    }
+
+    // ============================================================
+    // STUDY – FILE TREE
+    // ============================================================
+    const MAJORS = [
+      {
+        group: 'Ngành Công nghệ thông tin', ico: '💻', subs: [
+          'Công nghệ thông tin (IT)', 'Kỹ thuật phần mềm',
+          'Trí tuệ nhân tạo', 'An toàn thông tin', 'Vi mạch bán dẫn',
+          'Công nghệ ô tô số', 'Hệ thống thông tin', 'Thiết kế đồ họa và mỹ thuật số'
+        ]
+      },
+      {
+        group: 'Ngành công nghệ truyền thông', ico: '📡', subs: [
+          'Truyền thông đa phương tiện', 'Quan hệ công chúng',
+          'Truyền thông Marketing tích hợp', 'Truyền thông thương hiệu'
+        ]
+      },
+      {
+        group: 'Khối ngành ngôn ngữ', ico: '🗣️', subs: [
+          'Ngôn ngữ Anh', 'Tiếng anh thương mại',
+          'Ngôn ngữ Hàn quốc', 'Tiếng hàn thương mại',
+          'Ngôn ngữ Trung Quốc', 'Tiếng Trung thương mại'
+        ]
+      },
+      { group: 'Ngành Luật', ico: '⚖️', subs: ['Luật', 'Luật kinh tế'] },
+      {
+        group: 'Ngành Quản trị kinh doanh', ico: '📊', subs: [
+          'Marketing', 'Kinh doanh quốc tế', 'Thương mại điện tử', 'Quản trị kinh doanh',
+          'Quản trị giải trí và sự kiện', 'Quản trị trải nghiệm khách hàng',
+          'Quản trị thu mua', 'Quản trị khách sạn', 'Quản trị dịch vụ du lịch và lữ hành',
+          'Phân tích kinh doanh (Business Analytics)',
+          'Logistics và Quản lý chuỗi cung ứng toàn cầu',
+          'Công nghệ tài chính (Fintech)', 'Tài chính doanh nghiệp',
+          'Tài chính thông minh', 'Tài chính ngân hàng'
+        ]
+      },
+      {
+        group: 'Ngành Cử nhân tài năng ngành Khoa học máy tính', ico: '🔬', subs: [
+          'Trí tuệ nhân tạo và Khoa học dữ liệu', 'An minh mạng và an toàn số'
+        ]
+      },
+    ];
+
+    // fileTree structure: { majorId: { id, name, type:'folder'|'file', children:[], url? } }
+    // majorId is slugified major name
+
+    function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]/g, '_'); }
+    function getMajorNode(majorId) {
+      if (!DB.fileTree[majorId]) DB.fileTree[majorId] = { id: majorId, name: majorId, type: 'folder', children: [] };
+      return DB.fileTree[majorId];
+    }
+    function findNodeById(tree, id) {
+      if (!tree) return null;
+      if (tree.id === id) return tree;
+      for (const c of (tree.children || [])) {
+        const r = findNodeById(c, id);
+        if (r) return r;
+      }
+      return null;
+    }
+    function findNodeInAll(id) {
+      for (const mid of Object.keys(DB.fileTree)) {
+        const r = findNodeById(DB.fileTree[mid], id);
+        if (r) return { node: r, majorId: mid };
+      }
+      return null;
+    }
+
+    let selectedNodeId = null;
+    let studyMajorId = null;
+
+    function buildStudyTree() {
+      const root = document.getElementById('tree-root');
+      root.innerHTML = '';
+      MAJORS.forEach(mg => {
+        const grpDiv = document.createElement('div');
+        grpDiv.className = 'major-group';
+        const grpTitle = document.createElement('div');
+        grpTitle.className = 'major-group-title';
+        grpTitle.textContent = mg.ico + ' ' + mg.group;
+        grpDiv.appendChild(grpTitle);
+        mg.subs.forEach(sub => {
+          const mid = slugify(sub);
+          const item = document.createElement('div');
+          item.className = 'major-item';
+          item.innerHTML = `<span class="m-ico">📂</span>${sub}`;
+          item.dataset.majorId = mid;
+          item.dataset.majorName = sub;
+          item.onclick = () => openMajor(mid, sub, item);
+          grpDiv.appendChild(item);
+        });
+        root.appendChild(grpDiv);
+      });
+    }
+
+    function openMajor(mid, name, el) {
+      document.querySelectorAll('.major-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      studyMajorId = mid;
+      getMajorNode(mid).name = name;
+      studyPath = [mid];
+      renderStudyView();
+    }
+
+    function renderStudyView() {
+      const view = document.getElementById('study-view');
+      const bc = document.getElementById('study-breadcrumb');
+      if (!studyMajorId) { view.innerHTML = '<div class="study-empty"><div class="e-ico">📂</div><p>Chọn ngành học</p></div>'; return; }
+
+      // Build breadcrumb
+      let node = getMajorNode(studyMajorId);
+      let chain = [node];
+      // traverse studyPath (skip first = major)
+      for (let i = 1; i < studyPath.length; i++) {
+        const found = findNodeById(node, studyPath[i]);
+        if (found) { chain.push(found); node = found; }
+      }
+      const currentNode = chain[chain.length - 1];
+
+      // Breadcrumb HTML
+      bc.innerHTML = chain.map((n, i) => {
+        const name = n.id === studyMajorId ? (n.name || n.id) : n.name;
+        if (i === chain.length - 1) return `<span class="bc-active">${i > 0 ? '📄 ' : ''} ${name}</span>`;
+        return `<span style="cursor:pointer;color:var(--blue);font-size:.78rem" onclick="navToPath(${i})">${name}</span><span class="bc-sep"> › </span>`;
+      }).join('');
+
+      if (currentNode.type === 'file') {
+        view.innerHTML = `<div class="study-empty"><div class="e-ico">📄</div><p>Tệp: ${currentNode.name}</p>${currentNode.url ? `<a href="${currentNode.url}" target="_blank" style="color:var(--green);font-size:.85rem;margin-top:8px">🔗 Mở tệp</a>` : ''}</div>`;
+        return;
+      }
+
+      const children = currentNode.children || [];
+      const folders = children.filter(c => c.type === 'folder');
+      const files = children.filter(c => c.type === 'file');
+
+      let html = '';
+
+      // Folders
+      if (folders.length > 0) {
+        html += `<div class="folder-grid">`;
+        folders.forEach(f => {
+          const fileCount = countFiles(f);
+          html += `<div class="folder-card" onclick="navInto('${f.id}')">
+        <div class="fc-ico">📁</div>
+        <div class="fc-name">${f.name}</div>
+        <div class="fc-count">${fileCount} tệp</div>
+        ${isAdmin ? `<button class="fc-del" onclick="event.stopPropagation();deleteNode('${currentNode.id}','${f.id}')">✕</button>` : ''}
+      </div>`;
+        });
+        html += `</div>`;
+      }
+
+      // Files
+      if (files.length > 0) {
+        html += `<div class="file-list" style="margin-top:${folders.length > 0 ? '16px' : '0'}">`;
+        files.forEach(f => {
+          html += `<div class="file-item">
+        <span class="f-ico">📄</span>
+        <a href="${f.url || '#'}" target="_blank">${f.name}</a>
+        ${isAdmin ? `<button class="f-del" onclick="deleteNode('${currentNode.id}','${f.id}')">Xoá</button>` : ''}
+      </div>`;
+        });
+        html += `</div>`;
+      }
+
+      if (folders.length === 0 && files.length === 0) {
+        html = `<div class="study-empty"><div class="e-ico">📭</div><p>Thư mục trống</p></div>`;
+      }
+
+      // Admin add form
+      if (isAdmin) {
+        html += `<div class="admin-box" style="margin-top:20px">
+      <h4>⚙️ Thêm thư mục / tệp vào đây</h4>
+      <div class="form-row">
+        <div class="fg"><label>Tên thư mục mới</label><input type="text" id="new-folder-name" placeholder="Kỳ 1, ECO101..."></div>
+        <div style="display:flex;align-items:flex-end;padding-bottom:14px"><button class="btn-admin" onclick="addFolder('${currentNode.id}')">+ Tạo thư mục</button></div>
+      </div>
+      <div style="height:1px;background:var(--border);margin:10px 0"></div>
+      <div class="form-row">
+        <div class="fg"><label>Tên tệp</label><input type="text" id="new-file-name" placeholder="Đề thi HK2 2024.pdf"></div>
+        <div class="fg"><label>Link tệp</label><input type="text" id="new-file-url" placeholder="https://drive.google.com/..."></div>
+        <div style="display:flex;align-items:flex-end;padding-bottom:14px"><button class="btn-admin" onclick="addFile('${currentNode.id}')">+ Thêm tệp</button></div>
+      </div>
+    </div>`;
+      }
+
+      view.innerHTML = html;
+    }
+
+    function navToPath(idx) {
+      studyPath = studyPath.slice(0, idx + 1);
+      renderStudyView();
+    }
+    function navInto(childId) {
+      studyPath.push(childId);
+      renderStudyView();
+    }
+    function countFiles(node) {
+      let c = 0;
+      if (node.type === 'file') return 1;
+      (node.children || []).forEach(ch => c += countFiles(ch));
+      return c;
+    }
+
+    function addFolder(parentId) {
+      const name = document.getElementById('new-folder-name')?.value?.trim();
+      if (!name) return toast('Nhập tên thư mục.', 'err');
+      const parent = getNodeByIdInTree(parentId);
+      if (!parent) return;
+      const newNode = { id: 'n_' + Date.now(), name, type: 'folder', children: [] };
+      if (!parent.children) parent.children = [];
+      parent.children.push(newNode);
+      persist(); renderStudyView();
+      toast('Đã tạo thư mục "' + name + '"', 'ok');
+    }
+    function addFile(parentId) {
+      const name = document.getElementById('new-file-name')?.value?.trim();
+      const url = document.getElementById('new-file-url')?.value?.trim();
+      if (!name) return toast('Nhập tên tệp.', 'err');
+      const parent = getNodeByIdInTree(parentId);
+      if (!parent) return;
+      if (!parent.children) parent.children = [];
+      parent.children.push({ id: 'f_' + Date.now(), name, type: 'file', url: url || '#' });
+      persist(); renderStudyView();
+      toast('Đã thêm tệp "' + name + '"', 'ok');
+    }
+    function deleteNode(parentId, nodeId) {
+      const parent = getNodeByIdInTree(parentId);
+      if (!parent || !parent.children) return;
+      parent.children = parent.children.filter(c => c.id !== nodeId);
+      persist(); renderStudyView();
+      toast('Đã xoá.', 'ok');
+    }
+    function getNodeByIdInTree(id) {
+      if (!studyMajorId) return null;
+      return findNodeById(getMajorNode(studyMajorId), id) || getMajorNode(studyMajorId);
+    }
+
+    // ============================================================
+    // CLUBS DATA
+    // ============================================================
+    const CLUBS = [
+      { id: 'fkc', tag: 'FKC', name: 'FPTU Korean Club', desc: 'CLB Ngôn ngữ Hàn Quốc', cat: 'Học thuật', intro: 'FKC - FPTU Korean Club - CLB Ngôn ngữ Hàn Quốc' },
+      { id: 'fucc', tag: 'FUCC', name: 'FPTU Chinese Club', desc: 'CLB Ngôn ngữ Trung Quốc', cat: 'Học thuật', intro: 'FUCC - FPTU Chinese Club - CLB Ngôn ngữ Trung Quốc' },
+      { id: 'src', tag: 'SRC', name: 'Security Research Club', desc: 'CLB An toàn thông tin', cat: 'Học thuật', intro: 'SRC - Security Research Club - CLB An toàn thông tin' },
+      { id: 'hts', tag: 'HTS', name: 'Hospitality & Tourism Skills', desc: 'CLB Kỹ năng ngành QTDL&KS', cat: 'Học thuật', intro: 'HTS - Hospitality & Tourism Skills Club - CLB về Kỹ năng ngành QTDL&KS' },
+      { id: 'resup', tag: 'ResUp', name: 'Raise Up The Pioneer Power', desc: 'CLB Kinh doanh & Marketing', cat: 'Học thuật', intro: 'ResUp là câu lạc bộ Business - Marketing thuộc Trường Đại học FPT - cơ sở Đà Nẵng.' },
+      { id: 'dever', tag: 'Dever', name: 'Developer Club', desc: 'CLB Lập trình', cat: 'Học thuật', intro: 'Dever - CLB Lập Trình' },
+      { id: 'miraijc', tag: 'Mirai JC', name: 'Japanese Club', desc: 'CLB Văn hoá & Học thuật Nhật Bản', cat: 'Học thuật', intro: 'Mirai JC - Japanese Club - CLB về Văn hóa & Học thuật của Nhật Bản. Câu lạc bộ về văn hóa và học thuật của Nhật Bản trực thuộc quản lý bởi ĐH FPT ĐN' },
+      { id: 'fic', tag: 'FIC', name: 'Financial Investing Club', desc: 'CLB Tài chính', cat: 'Học thuật', intro: 'FIC - Financial Investing Club - CLB Tài Chính' },
+      { id: 'noise', tag: 'Noise Makers', name: 'Noise Makers', desc: 'CLB Nhảy', cat: 'Nghệ thuật', intro: 'Noise Makers - CLB Nhảy' },
+      { id: 'evo', tag: 'EVo', name: 'Event Club', desc: 'CLB Sự kiện', cat: 'Nghệ thuật', intro: 'EVo - Event Club - CLB Sự Kiện. Câu lạc bộ sự kiện trực thuộc FPT University Đà Nẵng, CLB báo nhất trường!' },
+      { id: 'tia', tag: 'TIA', name: 'Traditional Instruments Abide', desc: 'CLB Nhạc cụ dân tộc', cat: 'Nghệ thuật', intro: 'TIA - Traditional Instruments Abide Club - CLB Nhạc Cụ Dân Tộc. Câu lạc bộ nhạc cụ dân tộc Đại học FPT Đà Nẵng' },
+      { id: 'rhythm', tag: 'RHYTHM', name: 'Xưởng làm nhạc', desc: 'CLB Sản xuất âm nhạc', cat: 'Nghệ thuật', intro: 'RHYTHM - Xưởng Làm Nhạc - CLB Sản Xuất Âm Nhạc. CLB sản xuất âm nhạc thuộc Đại Học FPT Đà Nẵng' },
+      { id: 'dfp', tag: 'DfP', name: 'Dance for Passion', desc: 'CLB Nhảy', cat: 'Nghệ thuật', intro: 'DfP - Dance for Passion Club - CLB Nhảy' },
+      { id: 'mic', tag: "MIC's Home", name: "MIC's Home", desc: 'CLB MC', cat: 'Nghệ thuật', intro: "MIC's Home - CLB MC" },
+      { id: 'fum', tag: 'FUM', name: 'Media Club', desc: 'CLB Truyền thông', cat: 'Nghệ thuật', intro: 'FUM - Media Club - CLB Truyền Thông' },
+      { id: 'fgd', tag: 'FGD', name: 'Graphic Design Club', desc: 'CLB Thiết kế đồ hoạ', cat: 'Nghệ thuật', intro: 'FGD - Graphic Design Club - CLB Thiết kế đồ hoạ' },
+      { id: 'nys', tag: 'NYS', name: 'Name Your Soul', desc: 'CLB Nghệ thuật', cat: 'Nghệ thuật', intro: 'NYS - Name Your Soul - CLB Nghệ Thuật' },
+      { id: 'vct', tag: 'VCT', name: 'Võ Cổ Truyền', desc: 'CLB Võ cổ truyền', cat: 'Thể thao', intro: 'VCT - CLB Võ Cổ Truyền' },
+      { id: 'fufc', tag: 'FUFC', name: 'FPTU Football Club', desc: 'CLB Bóng đá', cat: 'Thể thao', intro: 'FUFC - CLB Bóng Đá. CÂU LẠC BỘ BÓNG ĐÁ TRƯỜNG ĐẠI HỌC FPT ĐÀ NẴNG' },
+      { id: 'fhg', tag: 'FHG', name: 'FUDA Hoops Gene', desc: 'CLB Bóng rổ', cat: 'Thể thao', intro: 'FHG - CLB Bóng Rổ' },
+      { id: 'fub', tag: 'FUB', name: 'FPTU Badminton Club', desc: 'CLB Cầu lông', cat: 'Thể thao', intro: 'FUB - CLB Cầu Lông' },
+      { id: 'fdn', tag: 'FDN', name: 'Đức Nam Nhị Khúc Côn', desc: 'CLB Nhị khúc côn', cat: 'Thể thao', intro: 'FDN - CLB Đức Nam Nhị Khúc Côn' },
+      { id: 'fvc', tag: 'FVC', name: 'FUDN Vovinam Club', desc: 'CLB Vovinam', cat: 'Thể thao', intro: 'FVC - CLB Vovinam' },
+      { id: 'fenious', tag: 'Fenious', name: 'Fenious', desc: 'CLB Văn hoá ẩm thực', cat: 'Cộng đồng', intro: 'Fenious - CLB Văn hóa ẩm thực' },
+      { id: 'fcs', tag: 'FCS', name: "Fuda's Creative Space", desc: 'CLB Không gian sáng tạo', cat: 'Cộng đồng', intro: 'FCS - CLB Không gian sáng tạo' },
+      { id: 'f2k', tag: 'F2K', name: "FPT's Kindness Krew", desc: 'CLB Thiện nguyện', cat: 'Cộng đồng', intro: 'F2K - CLB Thiện Nguyện' },
+      { id: 'itsc', tag: 'ITSC', name: 'Innovative Technology Student Club', desc: 'CLB Công nghệ sáng tạo', cat: 'Cộng đồng', intro: 'ITSC - Innovative Technology Student Club' },
+    ];
+    const CAT_ICO = { 'Học thuật': '🎓', 'Nghệ thuật': '🎨', 'Thể thao': '⚽', 'Cộng đồng': '🌍' };
+
+    function getClubUnread(clubId) {
+      if (!CU) return 0;
+      const posts = (DB.clubPosts[clubId] || []).filter(p => !p.pending);
+      if (posts.length === 0) return 0;
+      const readMap = (DB.readClubs[CU.alias] || {});
+      const lastRead = readMap[clubId] || 0;
+      return posts.filter(p => p.ts > lastRead).length;
+    }
+
+    function renderClubList() {
+      const cats = [...new Set(CLUBS.map(c => c.cat))];
+      const container = document.getElementById('clubs-list-view');
+      let html = '<div class="clubs-categories">';
+      cats.forEach(cat => {
+        const clubs = CLUBS.filter(c => c.cat === cat);
+        html += `<div>
+      <div class="club-cat-title">${CAT_ICO[cat] || '•'} ${cat}</div>
+      <div class="clubs-grid">`;
+        clubs.forEach(c => {
+          const unread = getClubUnread(c.id);
+          html += `<div class="club-card" onclick="openClub('${c.id}')" data-clubcard="${c.id}">
+        <span class="club-unread ${unread > 0 ? 'visible' : ''}" id="unread-${c.id}">${unread > 0 ? unread : ''}</span>
+        <div class="club-tag">${c.tag}</div>
+        <div class="club-name">${c.name}</div>
+        <div class="club-desc">${c.desc}</div>
+      </div>`;
+        });
+        html += `</div></div>`;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function renderSbClubs() {
+      const el = document.getElementById('sb-clubs-list');
+      el.innerHTML = CLUBS.map(c => {
+        const unread = getClubUnread(c.id);
+        return `<div class="sb-item" onclick="openClub('${c.id}')" data-sbclub="${c.id}">
+      <span class="ico">🔹</span>
+      <span class="lbl">${c.tag}</span>
+      ${unread > 0 ? `<span class="sb-badge">${unread}</span>` : ''}
+    </div>`;
+      }).join('');
+    }
+
+    function openClub(id) {
+      currentClubId = id;
+      const club = CLUBS.find(c => c.id === id);
+      if (!club) return;
+
+      // Mark as read
+      if (!DB.readClubs[CU.alias]) DB.readClubs[CU.alias] = {};
+      DB.readClubs[CU.alias][id] = Date.now();
+      persist();
+
+      // Update unread badges
+      const badge = document.getElementById('unread-' + id);
+      if (badge) { badge.textContent = ''; badge.classList.remove('visible'); }
+      renderSbClubs();
+
+      // Show detail panel
+      document.getElementById('club-detail-header').innerHTML = `
+    <h2>🏆 ${club.name} <span style="font-size:.75rem;font-weight:400;color:var(--muted)">(${club.tag})</span></h2>
+    <p>${club.desc} · ${CAT_ICO[club.cat] || ''} ${club.cat}</p>`;
+
+      const form = document.getElementById('club-post-form');
+      form.classList.toggle('visible', isAdmin);
+
+      renderClubPosts(id);
+      showPanel('club-detail');
+    }
+
+    function renderClubPosts(id) {
+      const posts = (DB.clubPosts[id] || []);
+      const el = document.getElementById('club-detail-posts');
+      if (posts.length === 0) {
+        el.innerHTML = `<div class="empty-state"><div class="ei">📭</div><p>Chưa có bài đăng nào</p></div>`;
+        return;
+      }
+      const lastRead = (DB.readClubs[CU?.alias] || {})[id] || 0;
+      el.innerHTML = posts.map((p, i) => {
+        const unread = !p.pending && p.ts > lastRead;
+        return `<div class="post-card ${unread ? 'unread' : ''}">
+      ${p.pending ? `<div class="post-pending">⏳ Chờ duyệt</div>` : ''}
+      <div class="post-title">${esc(p.title)}</div>
+      <div class="post-body">${esc(p.body)}</div>
+      ${p.link ? `<div class="post-link"><a href="${p.link}" target="_blank">🔗 Xem chi tiết ↗</a></div>` : ''}
+      <div class="post-meta">📅 ${p.date} &nbsp;|&nbsp; 👤 ${esc(p.author)}</div>
+      ${isAdmin && p.pending ? `<div class="action-row"><button class="approve-btn" onclick="approveClubPost('${id}',${i})">✓ Duyệt</button><button class="reject-btn" onclick="deleteClubPost('${id}',${i})">✗ Xoá</button></div>` : ''}
+      ${isAdmin && !p.pending ? `<div class="action-row"><button class="reject-btn" onclick="deleteClubPost('${id}',${i})">🗑 Xoá</button></div>` : ''}
+    </div>`;
+      }).join('');
+    }
+
+    function submitClubPost() {
+      const title = val('cpf-title'), body = val('cpf-body'), link = val('cpf-link');
+      if (!title) return toast('Nhập tiêu đề.', 'err');
+      if (!DB.clubPosts[currentClubId]) DB.clubPosts[currentClubId] = [];
+      DB.clubPosts[currentClubId].push({ title, body, link, author: CU.alias, date: now(), ts: Date.now(), pending: !isAdmin });
+      persist(); renderClubPosts(currentClubId); renderClubList(); renderSbClubs();
+      ['cpf-title', 'cpf-body', 'cpf-link'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+      toast(isAdmin ? 'Đã đăng bài!' : 'Đã gửi, chờ admin duyệt.', 'ok');
+    }
+    function approveClubPost(id, i) { DB.clubPosts[id][i].pending = false; persist(); renderClubPosts(id); renderClubList(); renderSbClubs(); toast('Đã duyệt.', 'ok'); }
+    function deleteClubPost(id, i) { DB.clubPosts[id].splice(i, 1); persist(); renderClubPosts(id); renderClubList(); renderSbClubs(); toast('Đã xoá.', 'ok'); }
+
+    // ============================================================
+    // EVENT POSTS (abroad / school)
+    // ============================================================
+    function submitPost(type) {
+      const pfx = type === 'abroad' ? 'apf' : 'spf';
+      const title = val(pfx + '-title'), body = val(pfx + '-body'), link = val(pfx + '-link');
+      if (!title) return toast('Nhập tiêu đề.', 'err');
+      const list = type === 'abroad' ? DB.abroadPosts : DB.schoolPosts;
+      list.push({ title, body, link, author: CU.alias, date: now(), ts: Date.now(), pending: !isAdmin });
+      persist(); renderPosts(type);
+      [pfx + '-title', pfx + '-body', pfx + '-link'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+      toast(isAdmin ? 'Đã đăng!' : 'Đã gửi, chờ admin duyệt.', 'ok');
+    }
+
+    function renderPosts(type) {
+      const list = type === 'abroad' ? DB.abroadPosts : DB.schoolPosts;
+      const containerId = type === 'abroad' ? 'abroad-posts' : 'school-posts';
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      if (list.length === 0) { el.innerHTML = `<div class="empty-state"><div class="ei">📭</div><p>Chưa có bài đăng nào</p></div>`; return; }
+      el.innerHTML = list.map((p, i) => `
+    <div class="post-card">
+      ${p.pending ? `<div class="post-pending">⏳ Chờ duyệt</div>` : ''}
+      <div class="post-title">${esc(p.title)}</div>
+      <div class="post-body">${esc(p.body)}</div>
+      ${p.link ? `<div class="post-link"><a href="${p.link}" target="_blank">🔗 Xem chi tiết ↗</a></div>` : ''}
+      <div class="post-meta">📅 ${p.date} &nbsp;|&nbsp; 👤 ${esc(p.author)}</div>
+      ${isAdmin && p.pending ? `<div class="action-row"><button class="approve-btn" onclick="approvePost('${type}',${i})">✓ Duyệt</button><button class="reject-btn" onclick="deletePost('${type}',${i})">✗ Xoá</button></div>` : ''}
+      ${isAdmin && !p.pending ? `<div class="action-row"><button class="reject-btn" onclick="deletePost('${type}',${i})">🗑 Xoá</button></div>` : ''}
+    </div>`).join('');
+    }
+    function approvePost(t, i) { const a = t === 'abroad' ? DB.abroadPosts : DB.schoolPosts; a[i].pending = false; persist(); renderPosts(t); toast('Đã duyệt.', 'ok'); }
+    function deletePost(t, i) { const a = t === 'abroad' ? DB.abroadPosts : DB.schoolPosts; a.splice(i, 1); persist(); renderPosts(t); toast('Đã xoá.', 'ok'); }
+
+    // ============================================================
+    // CHAT
+    // ============================================================
+    function renderChat() {
+      const el = document.getElementById('chat-msgs');
+      const sys = `<div class="msg-row"><div class="msg-av">🤖</div><div><div class="msg-bubble">Xin chào! Đây là phòng chat cộng đồng FUDAPath. Hãy đặt câu hỏi hoặc chia sẻ 👋</div><div class="msg-meta">FUDABot</div></div></div>`;
+      el.innerHTML = sys + DB.chat.map((m, i) => `
+    <div class="msg-row ${m.alias === CU?.alias ? 'me' : ''}">
+      <div class="msg-av">${m.alias === 'NOVA' ? '👑' : '👤'}</div>
+      <div>
+        <div class="msg-bubble">${esc(m.text)}</div>
+        <div class="msg-meta">${m.alias}${m.alias === 'NOVA' ? ' <span style="color:var(--pink);font-size:.68rem">Admin</span>' : ''} · ${m.time}${m.pending ? ' · <span style="color:var(--yellow);font-size:.7rem">⏳ chờ duyệt</span>' : ''}</div>
+      </div>
+    </div>`).join('');
+      el.scrollTop = el.scrollHeight;
+      renderPendingChats();
+    }
+    function sendChat() {
+      const inp = document.getElementById('chat-inp');
+      const text = inp.value.trim();
+      if (!text) return;
+      DB.chat.push({ alias: CU.alias, text, time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }), ts: Date.now(), pending: !isAdmin });
+      persist(); inp.value = ''; renderChat();
+    }
+    function renderPendingChats() {
+      if (!isAdmin) return;
+      const el = document.getElementById('pending-chat-list');
+      if (!el) return;
+      const pending = DB.chat.filter(m => m.pending);
+      if (pending.length === 0) { el.innerHTML = '<p style="color:var(--muted);font-size:.83rem">Không có tin nhắn chờ duyệt.</p>'; return; }
+      el.innerHTML = pending.map((m, pi) => `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:9px;background:var(--bg);border-radius:8px;margin-bottom:7px">
+      <div style="flex:1"><strong style="font-size:.83rem">${m.alias}</strong>: <span style="font-size:.82rem">${esc(m.text)}</span></div>
+      <button class="approve-btn" onclick="approveChatMsg(${DB.chat.indexOf(m)})">✓</button>
+      <button class="reject-btn" onclick="rejectChatMsg(${DB.chat.indexOf(m)})">✗</button>
+    </div>`).join('');
+    }
+    function approveChatMsg(i) { if (DB.chat[i]) DB.chat[i].pending = false; persist(); renderChat(); }
+    function rejectChatMsg(i) { DB.chat.splice(i, 1); persist(); renderChat(); }
+
+    // ============================================================
+    // CHAT WIDGET FUNCTIONS
+    // ============================================================
+    function toggleChat() {
+      const widget = document.getElementById('chat-widget');
+      const toggle = document.getElementById('chat-toggle');
+      
+      if (widget.style.display === 'none' || widget.style.display === '') {
+        widget.style.display = 'flex';
+        toggle.classList.add('hidden');
+        renderChat(); // Load chat messages when opening
+      } else {
+        widget.style.display = 'none';
+        toggle.classList.remove('hidden');
+      }
+    }
+
+    function closeChat(event) {
+      event.stopPropagation();
+      const widget = document.getElementById('chat-widget');
+      const toggle = document.getElementById('chat-toggle');
+      
+      widget.style.display = 'none';
+      toggle.classList.remove('hidden');
+    }
+
+    function toggleMinimize(event) {
+      if (event) event.stopPropagation();
+      const widget = document.getElementById('chat-widget');
+      widget.classList.toggle('minimized');
+    }
+
+    // Auto-open chat when clicking on chat panel
+    const originalShowPanel = window.showPanel;
+    window.showPanel = function(id) {
+      originalShowPanel(id);
+      if (id === 'chat') {
+        toggleChat();
+      }
+    };
+
+    // ============================================================
+    // UTILS
+    // ============================================================
+    function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function now() { return new Date().toLocaleDateString('vi-VN'); }
+    function toast(msg, type = 'ok') {
+      const t = document.createElement('div');
+      t.className = `toast ${type}`; t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(8px)'; t.style.transition = 'all .3s'; setTimeout(() => t.remove(), 300); }, 2600);
+    }
+
+    // ============================================================
+    // SEED SAMPLE DATA
+    // ============================================================
+    if (DB.abroadPosts.length === 0) {
+      DB.abroadPosts.push({ title: 'Chương trình trao đổi Nhật Bản – Hè 2025', body: 'FPT University mở đơn xét chọn sinh viên tham gia trao đổi tại Nhật Bản. Yêu cầu GPA ≥ 2.5.', link: 'https://www.fpt.edu.vn', author: 'NOVA', date: '20/02/2025', ts: 1700000001000, pending: false });
+      persist();
+    }
+    if (DB.schoolPosts.length === 0) {
+      DB.schoolPosts.push(
+        { title: 'FUDA\'S GOT TALENT 2026', body: '📅 25/02/2026\\n📍Đại học FPT\\nCuộc thi tài năng thường niên của Đại học FPT Đà Nẵng.', link: '', author: 'NOVA', date: '25/02/2026', ts: 1700000000000, pending: false },
+        { title: 'Workshop: Back to school', body: '📅 23- 24/02/2026\\n🎤 Workshop: Back to school\\n📍Sảnh Penrose, toà nhà Gamma', link: '', author: 'NOVA', date: '23/02/2026', ts: 1700000000001, pending: false },
+        { title: 'HỘI LÀNG 2026 - WORKSHOP GIỮ TRỌN HỒN XUÂN VIỆT', body: '📅 02/02/2026\\n📍 Hội Làng Lạc Hồng 2026\\nWorkshop giữ trọn hồn xuân Việt trong khuôn khổ Hội làng 2026.', link: 'https://www.facebook.com/share/p/1AWHP74tw7/', author: 'NOVA', date: '02/02/2026', ts: 1700000000002, pending: false },
+        { title: 'Mèn đét ơi trường có Hỷ - CLB Evo', body: '📅 03/03/2026\\nTên: Mèn đét ơi trường có Hỷ - CLB Evo\\n📍Đại học FPT Đà Nẵng\\nSự kiện 8/3 do CLB Evo tổ chức.', link: '', author: 'NOVA', date: '03/03/2026', ts: 1700000000003, pending: false },
+        { title: 'SƠ LOẠI CUỘC THI FUDA\'S GOT TALENT 2026', body: '📅 07/03/2026\\nTên: SƠ LOẠI CUỘC THI FUDA\'S GOT TALENT 2026\\n📍Đại học FPT Đà Nẵng\\nVòng sơ loại cuộc thi FUDA\'S GOT TALENT 2026.\\n🔗 https://www.facebook.com/share/p/1Dc56uSYzP/', link: 'https://www.facebook.com/share/p/1Dc56uSYzP/', author: 'NOVA', date: '07/03/2026', ts: 1700000000004, pending: false },
+        { title: 'SPRING INTERFEST 2026', body: '📅 03/03/2026\\nTên: SPRING INTERFEST 2026\\n📍 Trường Đại học FPT Đà Nẵng\\n⏰ 15:30 - 19:30 | 03/03/2026\\nLễ hội giao lưu quốc tế mùa xuân.\\n🔗 https://www.facebook.com/share/p/1UwG5ZrcUm/', link: 'https://www.facebook.com/share/p/1UwG5ZrcUm/', author: 'NOVA', date: '03/03/2026', ts: 1700000000005, pending: false },
+        { title: 'BACK TO SCHOOL', body: '📅 23-24/02/2026\\nTên: BACK TO SCHOOL\\n📍 Sảnh Penrose, toà nhà Gamma\\n⏰ 23-24/02/2026\\nWorkshop trở lại trường.\\n🔗 https://www.facebook.com/share/p/1AAs5ZFPE8/', link: 'https://www.facebook.com/share/p/1AAs5ZFPE8/', author: 'NOVA', date: '23/02/2026', ts: 1700000000006, pending: false },
+        { title: 'GHI DANH FUDA\'S GOT TALENT 2026', body: '📅 25/02/2026\\nTên: GHI DANH FUDA\'S GOT TALENT 2026\\n⏰ 25/02/2026\\nMở đăng ký tham gia cuộc thi FUDA\'S GOT TALENT 2026.\\n🔗 https://www.facebook.com/share/p/18A7kBr6kC/', link: 'https://www.facebook.com/share/p/18A7kBr6kC/', author: 'NOVA', date: '25/02/2026', ts: 1700000000007, pending: false },
+        { title: 'LỄ TÔN VINH HỌC KỲ FALL 2025', body: '📅 02/02/2026\\nTên: LỄ TÔN VINH HỌC KỲ FALL 2025\\n📍 Sân trường Trường Đại học FPT Đà Nẵng (Giữa tòa nhà Gamma - Beta)\\n⏰ 17:00 - 02/02/2026\\nLễ vinh danh sinh viên xuất sắc học kỳ Fall 2025.\\n🔗 https://www.facebook.com/share/p/182Zwnq5ph/', link: 'https://www.facebook.com/share/p/182Zwnq5ph/', author: 'NOVA', date: '02/02/2026', ts: 1700000000008, pending: false },
+        { title: 'Spring Festival FPT Đà Nẵng 2025', body: 'Lễ hội văn hoá thường niên với nhiều hoạt động giao lưu, nghệ thuật và triển lãm sinh viên.', link: '', author: 'NOVA', date: '15/02/2025', ts: 1700000000999, pending: false }
+      );
+      persist();
+    }
+    
+    // SEED CLUB POSTS
+    if (!DB.clubPosts['fucc'] || DB.clubPosts['fucc'].length === 0) {
+      if (!DB.clubPosts['fucc']) DB.clubPosts['fucc'] = [];
+      DB.clubPosts['fucc'].push({ title: 'TRUNG HOA VÂN HỘI – ĐIỂM CHẠM VĂN HÓA PHƯƠNG ĐÔNG', body: '📅 17h00 | 27/02/2026\\n📍Sảnh Penrose, tòa Gamma\\nCLB Ngôn ngữ Trung Quốc tổ chức sự kiện văn hóa Trung Hoa với nhiều hoạt động thú vị.', link: '', author: 'NOVA', date: '27/02/2026', ts: 1700000003000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['resup'] || DB.clubPosts['resup'].length === 0) {
+      if (!DB.clubPosts['resup']) DB.clubPosts['resup'] = [];
+      DB.clubPosts['resup'].push({ title: 'REMINDER - INTERNATIONAL DAY 2025', body: '📅 9h30-15h, 18/01/2026.\\n📍Đại học FPT Đà Nẵng.\\nResUp Club tổ chức International Day 2025 với nhiều hoạt động quốc tế.', link: '', author: 'NOVA', date: '18/01/2026', ts: 1700000004000, pending: false });
+      DB.clubPosts['resup'].push({ title: 'HỘI LÀNG 2026 | RƯỚC TẾT VỀ', body: '📍Đại học FPT Đà Nẵng\\n📅 4/2/2026\\nResUp Club tham gia Hội làng 2026 với hoạt động rước Tết về.', link: '', author: 'NOVA', date: '04/02/2026', ts: 1700000005000, pending: false });
+      DB.clubPosts['resup'].push({ title: 'BIG OPEN DAY 2026', body: '📍Đại học FPT Đà Nẵng\\nResUp Club tham gia Big Open Day 2026.', link: '', author: 'NOVA', date: '10/02/2026', ts: 1700000006000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['dever'] || DB.clubPosts['dever'].length === 0) {
+      if (!DB.clubPosts['dever']) DB.clubPosts['dever'] = [];
+      DB.clubPosts['dever'].push({ title: 'Workshop "VIBECODE: Lập Trình Cùng Với AI"', body: '📅13/03/2026\\nDever Club tổ chức workshop về lập trình với AI.', link: '', author: 'NOVA', date: '13/03/2026', ts: 1700000007000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['fic'] || DB.clubPosts['fic'].length === 0) {
+      if (!DB.clubPosts['fic']) DB.clubPosts['fic'] = [];
+      DB.clubPosts['fic'].push({ title: 'MINI SHOW "SOUL MELODY" - AUTUMN BREEZE', body: '📅 17h30 ngày 26/10/2025\\n📍Quảng trường - Trường Đại học FPT Đà Nẵng\\nFIC Club tổ chức mini show âm nhạc.', link: '', author: 'NOVA', date: '26/10/2025', ts: 1700000008000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['evo'] || DB.clubPosts['evo'].length === 0) {
+      if (!DB.clubPosts['evo']) DB.clubPosts['evo'] = [];
+      DB.clubPosts['evo'].push({ title: 'THIỆP HỒNG TRAO TAY - LÊN ĐỒ ĐI HỈ NGAY!', body: '📍Sảnh Penrose, tòa Gamma\\n📅Ngày 03/03/2026\\nEVo Club tổ chức sự kiện 8/3.', link: '', author: 'NOVA', date: '03/03/2026', ts: 1700000009000, pending: false });
+      DB.clubPosts['evo'].push({ title: 'MÈN ĐÉT ƠI, TRƯỜNG CÓ HỶ!', body: '📍Sảnh Penrose, tòa Gamma\\n📅Ngày 03/03/2026.\\nEVo Club tổ chức sự kiện Mèn đét.', link: '', author: 'NOVA', date: '03/03/2026', ts: 1700010000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['rhythm'] || DB.clubPosts['rhythm'].length === 0) {
+      if (!DB.clubPosts['rhythm']) DB.clubPosts['rhythm'] = [];
+      DB.clubPosts['rhythm'].push({ title: 'Gom Hoa Gửi Nàng', body: '📅17:30 - 06/03/2026\\n📍Hội trường tầng 5, tòa Alpha\\nRHYTHM Club tổ chức đêm nhạc Gom Hoa Gửi Nàng.', link: '', author: 'NOVA', date: '06/03/2026', ts: 1700011000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['fum'] || DB.clubPosts['fum'].length === 0) {
+      if (!DB.clubPosts['fum']) DB.clubPosts['fum'] = [];
+      DB.clubPosts['fum'].push({ title: 'CHẠM LỜI', body: '📅05/03/2026\\nFUM Media Club tổ chức sự kiện Chạm lời.', link: '', author: 'NOVA', date: '05/03/2026', ts: 1700012000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['fufc'] || DB.clubPosts['fufc'].length === 0) {
+      if (!DB.clubPosts['fufc']) DB.clubPosts['fufc'] = [];
+      DB.clubPosts['fufc'].push({ title: 'FUFC S6 "Kick for Dream"', body: '📅03/03/2026\\nFUFC tổ chức giải bóng đá S6.', link: '', author: 'NOVA', date: '03/03/2026', ts: 1700013000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['fub'] || DB.clubPosts['fub'].length === 0) {
+      if (!DB.clubPosts['fub']) DB.clubPosts['fub'] = [];
+      DB.clubPosts['fub'].push({ title: 'FPT Tournament II', body: '📅22/03/2026\\nFUB Club tổ chức giải cầu lông FPT Tournament II.', link: '', author: 'NOVA', date: '22/03/2026', ts: 1700014000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['fcs'] || DB.clubPosts['fcs'].length === 0) {
+      if (!DB.clubPosts['fcs']) DB.clubPosts['fcs'] = [];
+      DB.clubPosts['fcs'].push({ title: 'CÓC PHIÊU LƯU 3: MẬT MÃ HẢI TRÌNH', body: '📅07/03/2026\\nFCS Club tổ chức sự kiện Cóc Phiêu Lưu 3.', link: '', author: 'NOVA', date: '07/03/2026', ts: 1700015000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['f2k'] || DB.clubPosts['f2k'].length === 0) {
+      if (!DB.clubPosts['f2k']) DB.clubPosts['f2k'] = [];
+      DB.clubPosts['f2k'].push({ title: 'NỤ CƯỜI XUÂN', body: '📅22/03/2026\\nF2K Club tổ chức hoạt động thiện nguyện Nụ Cười Xuân.', link: '', author: 'NOVA', date: '22/03/2026', ts: 1700016000, pending: false });
+      persist();
+    }
+    
+    if (!DB.clubPosts['fdn'] || DB.clubPosts['fdn'].length === 0) {
+      if (!DB.clubPosts['fdn']) DB.clubPosts['fdn'] = [];
+      DB.clubPosts['fdn'].push({ title: 'CLB FDN thông báo lịch học trở lại', body: 'CLB Đức Nam Nhị Khúc Côn thông báo lịch tập luyện học kỳ mới. Các bạn mới tham gia đăng ký qua link bên dưới.', link: 'https://www.facebook.com', author: 'NOVA', date: '10/02/2025', ts: 1700000002000, pending: false });
+      persist();
+    }
+
+    // SEED STUDY DATA
+    const seedData = {
+      "k_thu_t_ph_n_m_m": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Tổ chức và Kiến trúc máy tính (3)", "Nhập môn khoa học máy tính (3)", "Toán cho ngành kỹ thuật (3)", "Giáo dục thể chất 2 (2)", "Cơ sở lập trình (3)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Toán rời rạc (3)", "Mạng máy tính (3)", "Hệ điều hành (3)", "Giáo dục thể chất 3 (2)", "Lập trình hướng đối tượng (3)", "Thiết kế web (3)"],
+        "Kỳ 3": ["Các hệ cơ sở dữ liệu (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Thực hành OOP với Java (3)", "Xác suất thống kê (3)", "Lập trình hướng đối tượng (3)", "Nhập môn kỹ thuật phần mềm (3)"],
+        "Kỳ 4": ["Cấu trúc dữ liệu và giải thuật (3)", "Internet vạn vật (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Phát triển ứng dụng Java web (2)", "Yêu cầu phần mềm (3)"],
+        "Kỳ 5": ["Học phần 1 của combo* (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Dự án phát triển phần mềm (3)", "Kiểm thử phần mềm (3)", "Thiết kế trải nghiệm người dùng (3)"],
+        "Kỳ 6": ["Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Project Management (3)", "Học phần 2 của combo* (3)", "Học phần 3 của combo* (3)", "Kiến trúc và thiết kế phần mềm (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Đạo đức trong CNTT (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Lập trình di động (3)", "Học phần 4 của combo SE (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Kỹ thuật phần mềm (10)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "lu_t": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎸 Đàn nguyệt (3)"],
+        "Kỳ 1": ["Hán ngữ sơ cấp 1 (3)", "Luật Hiến pháp (2)", "Lịch sử nhà nước và pháp luật (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)", "Lý luận chung về nhà nước và pháp luật (4)"],
+        "Kỳ 2": ["Luật Hành chính và Luật Tố tụng hành chính (4)", "Hán ngữ sơ cấp 2 (3)", "Luật Dân sự 1 (3)", "Luật Lao động (3)", "Giáo dục thể chất 3 (2)", "Các học thuyết chính trị-pháp lý (3)"],
+        "Kỳ 3": ["Luật Dân sự 2 (3)", "Luật Thương mại (2)", "Luật hình sự 1 (2)", "Luật Đất đai, tài nguyên và môi trường (3)", "Tư pháp quốc tế (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 4": ["Luật Tố tụng dân sự (2)", "Luật Hình sự 2 (2)", "Luật Tố tụng Hình sự (2)", "Luật Sở hữu trí tuệ (2)", "Định hướng các nghề luật và đạo đức nghề luật (3)", "Xây dựng văn bản pháp luật (2)", "Công pháp quốc tế (3)"],
+        "Kỳ 5": ["Pháp luật cộng đồng ASEAN (2)", "Kỹ năng thẩm định, thẩm tra văn bản (3)", "Luật Tài chính và thuế (3)", "Luật Thương mại quốc tế (2)", "Luật Hôn nhân gia đình (2)", "Phương pháp nghiên cứu và kỹ năng viết pháp lý (3)"],
+        "Kỳ 6": ["Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Học phần thứ 1 của combo*(3)", "Học phần thứ 2 của combo* (3)", "Kỹ năng tranh biện (3)", "Kỹ năng đàm phán và soạn thảo hợp đồng (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Học phần thứ 3 của combo* (3)", "Kỹ năng tư vấn pháp luật (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Kỹ năng nghiên cứu, phân tích hồ sơ pháp lý (3)"],
+        "Kỳ 9": ["Khóa luận tốt nghiệp Luật (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "lu_t_kinh_t_": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎸 Đàn nguyệt (3)"],
+        "Kỳ 1": ["Hán ngữ sơ cấp 1 (3)", "Luật Hiến pháp (2)", "Lịch sử nhà nước và pháp luật (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)", "Lý luận chung về nhà nước và pháp luật (4)"],
+        "Kỳ 2": ["Luật Hành chính và Luật Tố tụng hành chính (4)", "Hán ngữ sơ cấp 2 (3)", "Luật Dân sự 1 (3)", "Luật Lao động (3)", "Giáo dục thể chất 3 (2)", "Các học thuyết chính trị-pháp lý (3)"],
+        "Kỳ 3": ["Luật Dân sự 2 (3)", "Luật Thương mại (2)", "Luật hình sự 1 (2)", "Luật Đất đai, tài nguyên và môi trường (3)", "Tư pháp quốc tế (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 4": ["Luật Tố tụng dân sự (2)", "Luật Hình sự 2 (2)", "Luật Tố tụng Hình sự (2)", "Luật Sở hữu trí tuệ (2)", "Định hướng các nghề luật và đạo đức nghề luật (3)", "Xây dựng văn bản pháp luật (2)", "Công pháp quốc tế (3)"],
+        "Kỳ 5": ["Pháp luật cộng đồng ASEAN (2)", "Học phần thứ 1 của Kiến thức bắt buộc* (3)", "Luật Tài chính và thuế (3)", "Luật Thương mại quốc tế (2)", "Luật Hôn nhân gia đình (2)", "Phương pháp nghiên cứu và kỹ năng viết pháp lý (3)"],
+        "Kỳ 6": ["Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần thứ 2 của Kiến thức bắt buộc* (3)", "Học phần thứ 1 của combo (3)", "Học phần thứ 2 của combo (3)", "Học phần thứ 1 của Kỹ năng bắt buộc* (3)", "Trải nghiệm khởi nghiệp 1 (3)"],
+        "Kỳ 8": ["Học phần thứ 3 của Kiến thức bắt buộc* (3)", "Học phần thứ 3 của combo (3)", "Học phần thứ 2 của Kỹ năng bắt buộc* (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Khóa luận tốt nghiệp Luật (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "marketing": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎶 Sáo trúc (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Kinh tế vi mô (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Kinh tế vĩ mô (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Chiến lược marketing số (3)", "Công cụ thiết kế trực quan 1 (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Hành vi người tiêu dùng (3)", "Marketing mạng xã hội (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Quản trị Marketing dịch vụ (3)", "Truyền thông marketing tích hợp (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Phân tích marketing số (3)", "Nhập môn thương mại điện tử (3)", "Quản trị nhân sự (3)", "Kỹ năng bán hàng chuyên nghiệp (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "Digital Marketing Tools_Option 1 (3)", "Digital Marketing Tools_Option 2 (3)", "Digital Marketing Tools_Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Digital Marketing Tools_Option 4 (3)", "Nghiên cứu Marketing (3)", "Triết học Mác Lê-nin (3)", "Kinh tế chính trị Mác Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Digital Marketing (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "kinh_doanh_qu_c_t_": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Kinh tế vi mô (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nguyên lý Quản trị và Marketing (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Kinh tế vĩ mô (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Quản lý vận hành quốc tế (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Kinh tế quốc tế (3)", "Quản trị nhân sự (3)", "Quản trị và đàm phán trong môi trường đa văn hóa (3)", "Nhập môn kinh doanh quốc tế (3)", "Thống kê ứng dụng trong kinh doanh (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Tài chính quốc tế (3)", "Quản lý chuỗi cung ứng (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Chiến lược Kinh doanh quốc tế(3)", "Nhập môn thương mại điện tử (3)", "Xuất nhập khẩu (3)", "Marketing quốc tế (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và Đạo đức kinh doanh (3)", "International Finance_Option 1 (3)", "International Finance_Option 2 (3)", "International Finance_Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "International Finance_Option 4 (3)", "Phương pháp nghiên cứu (3)", "Triết học Mác Lê-nin (3)", "Kinh tế chính trị Mác Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "International Business(10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "th_ng_m_i_i_n_t_": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Kinh tế vi mô (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nguyên lý Quản trị và Marketing (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Kinh tế vĩ mô (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Quản lý vận hành quốc tế (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Kinh tế quốc tế (3)", "Quản trị nhân sự (3)", "Quản trị và đàm phán trong môi trường đa văn hóa (3)", "Nhập môn kinh doanh quốc tế (3)", "Thống kê ứng dụng trong kinh doanh (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Tài chính quốc tế (3)", "Quản lý chuỗi cung ứng (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Chiến lược Kinh doanh quốc tế(3)", "Nhập môn thương mại điện tử (3)", "Xuất nhập khẩu (3)", "Marketing quốc tế (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và Đạo đức kinh doanh (3)", "International Finance_Option 1 (3)", "International Finance_Option 2 (3)", "International Finance_Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "International Finance_Option 4 (3)", "Phương pháp nghiên cứu (3)", "Triết học Mác Lê-nin (3)", "Kinh tế chính trị Mác Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "International Business(10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "qu_n_tr_kinh_doanh": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🥁 Trống quân (3)"],
+        "Kỳ 1": ["Nguyên lý Marketing (3)", "Tổng quan ngành du lịch và khách sạn (3)", "Tiếng anh Chuyên ngành Khách sạn - Du lịch Trung cấp 1 (3)", "Nhập môn quản lí (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Nguyên lí kế toán (3)", "Tiếng anh Chuyên ngành Khách sạn - Du lịch Trung cấp 2 (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Quản trị vận hành khách sạn (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Các vấn đề đương đại ngành khách sạn, du lịch (3)", "Quản trị nhân sự (3)", "Môi trường kinh doanh (3)", "Địa Lý du lịch (3)", "Quản trị và đàm phán trong môi trường đa văn hóa (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Tổ chức sự kiện (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Quản trị dịch vụ ăn uống (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Học phần 1 của combo (3)", "Học phần 2 của combo (3)", "Marketing mạng xã hội (3)", "Học phần 3 của combo (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Quản trị trải nghiệm khách hàng(3)", "Quản trị doanh thu khách sạn (3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)", "Học phần 4 của combo (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Luật và Đạo đức kinh doanh (3)", "Phương pháp nghiên cứu (3)", "Triết học Mác Lê-nin (3)", "Kinh tế chính trị Mác Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Hotel Management (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "qu_n_tr_d_ch_v_du_l_ch_v_l_h_nh": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Môi trường kinh doanh (3)", "Tổng quan ngành du lịch và khách sạn (3)", "Tiếng anh Chuyên ngành Khách sạn - Du lịch Trung cấp 1 (3)", "Nhập môn quản lí (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Nguyên lí kế toán (3)", "Tiếng anh Chuyên ngành Khách sạn - Du lịch Trung cấp 2 (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Cơ sở văn hóa Việt Nam (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Tài chính doanh nghiệp (3)", "Quản trị nhân sự (3)", "Nguyên lý Marketing(3)", "Địa Lý du lịch (3)", "Quản trị du lịch và lữ hành (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Tổ chức sự kiện (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Tuyến điểm du lịch Việt Nam (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Tour Guiding_Option 1 (3)", "Tour Guiding_Option 2 (3)", "Quản trị điểm đến và Marketing (3)", "Hành Vi khách du lịch (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và Đạo đức kinh doanh (3)", "Marketing mạng xã hội(3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)", "Tour Guiding_Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Tour Guiding_Option 4 (3)", "Phương pháp nghiên cứu (3)", "Triết học Mác Lê-nin (3)", "Kinh tế chính trị Mác Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Tourism and Travel Management (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "ph_n_t_ch_kinh_doanh": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Môi trường kinh doanh (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Nhập môn quản lý Logistics và chuỗi cung ứng (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Thương mại quốc tế (3)", "Quản trị nhân sự (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Quản trị vận tải quốc tế (3)", "Thu mua toàn cầu (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Vận tải hàng hóa bằng đường hàng không (3)", "Vận tải, giao nhận hàng hóa bằng đường biển(3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Khai báo hải quan điện tử (3)", "Hàng hóa và bảo hiểm(3)", "Hệ thống ERP: khái niệm và thực hành với SAP_ERP System(3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "GL_COM*1 -- Option 1 (3)", "GL_COM*1 -- Option 2 (3)", "GL_COM*1 -- Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "GL_COM*1 -- Option 4 (3)", "Phương pháp nghiên cứu và phân tích định lượng (3)", "Triết học Mác Lê-nin (3)", "Kinh tế chính trị Mác Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Graduation Elective (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "c_ng_ng_h_t_i_ch_nh_fintech": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Kinh tế vi mô (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Kinh tế vĩ mô (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Kế toán quản trị (3)", "KInh tế tiền tệ và kinh tế toàn cầu (3)", "tài chính doanh nghiệp nâng cao (3)", "Quản trị nhân sự (3)", "Thống kê ứng dụng trong kinh doanh (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong dịch vụ tài chính (3)", "Hán ngữ sơ cấp 1 (3)", "Thị trường tài chính và các định chế tài chính (3)", "Phân tích báo cáo tài chính (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Mô hình tài chính(3)", "Công cụ phái sinh (3)", "Phương pháp nghiên cứu và phân tích định lượng (3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "Investment Finance_Option 1 (3)", "Investment Finance_Option 2 (3)", "Investment Finance_Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Investment Finance_Option 4 (3)", "Thẩm định dự án đầu tư (3)", "Triết học Mác Lê-nin (3)", "Kinh tế chính trị Mác Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Finance(10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "ng_n_ng_anh": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🪈 Tiêu (3)"],
+        "Kỳ 1": ["Hán ngữ sơ cấp (3)", "Kỹ năng đọc tư duy phản biện tiếng anh (3)", "Ngữ pháp tiếng anh nâng cao (3)", "Ngữ âm và âm vị học tiếng anh (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Hán ngữ sơ cấp 2 (3)", "Nghe tiếng anh học thuật (3)", "Viết tiếng anh học thuật (3)", "Dẫn luận ngôn ngữ (3)", "Giáo dục thể chất 3 (2)", "Cơ sở văn hóa Việt Nam (3)"],
+        "Kỳ 3": ["Hình thái học tiếng anh (3)", "Kỹ năng viết nghiên cứu tiếng anh 1 (3)", "Văn học Anh & Mỹ (3)", "Nói trước công chúng (3)", "Văn hóa các nước nói tiếng Anh (3)"],
+        "Kỳ 4": ["Giao tiếp trong môi trường đa văn hóa (3)", "Phiên dịch tiếng anh 1 (3)", "Biên dịch tiếng anh 1 (3)", "Kỹ năng viết nghiên cứu tiếng anh 2 (3)", "Cú pháp học tiếng anh (3)"],
+        "Kỳ 5": ["Phiên dịch tiếng anh 2 (3)", "Biên dịch tiếng anh 2 (3)", "Viết tiếng anh trong kinh doanh (3)", "Ngữ nghĩa học tiếng anh (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Đạo đức trong công việc (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần thứ 1 của combo (3)", "Học phần thứ 2 của combo (3)", "Ngữ dụng học tiếng anh (3)", "Ngôn ngữ học xã hội (3)", "Trải nghiệm khởi nghiệp 1 (3)"],
+        "Kỳ 8": ["Học phần thứ 3 của combo (3)", "Học phần thứ 4 của combo (3)", "Phương pháp nghiên cứu (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Học phần tốt nghiệp lựa chọn ngành ngôn ngữ anh (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "ti_ng_anh_th_ng_m_i": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Hán ngữ sơ cấp (3)", "Kỹ năng đọc tư duy phản biện tiếng anh (3)", "Ngữ pháp tiếng anh nâng cao (3)", "Ngữ âm và âm vị học tiếng anh (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Hán ngữ sơ cấp 2 (3)", "Viết tiếng anh học thuật (3)", "Dẫn luận ngôn ngữ (3)", "Giáo dục thể chất 3 (2)", "Nói trước công chúng (3)"],
+        "Kỳ 3": ["Môi trường kinh doanh (3)", "Kỹ năng viết nghiên cứu tiếng anh 1 (3)", "Văn học Anh & Mỹ (3)", "Nói trước công chúng (3)", "Giao tiếp liên văn hóa (3)"],
+        "Kỳ 4": ["Tiếng anh chuyên ngành Logistics (3)", "Phiên dịch tiếng anh 1 (3)", "Biên dịch tiếng anh 1 (3)", "Tiếng anh chuyên ngành Marketing (3)", "Hành vi tổ chức (3)"],
+        "Kỳ 5": ["Phiên dịch tiếng anh 2 (3)", "Biên dịch tiếng anh 2 (3)", "Nguyên lý quản trị và Marketing (3)", "Nhập môn Quản lý Logistic và chuỗi cung ứng (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Đạo đức trong công việc (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần thứ 1 của combo (3)", "Học phần thứ 2 của combo (3)", "Chuyển đổi số trong kinh doanh (3)", "Ngôn ngữ học xã hội (3)", "Trải nghiệm khởi nghiệp 1 (3)"],
+        "Kỳ 8": ["Học phần thứ 3 của combo (3)", "Học phần thứ 4 của combo (3)", "Phương pháp nghiên cứu (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Học phần tốt nghiệp lựa chọn ngành ngôn ngữ anh (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "ng_n_ng_h_n_qu_c": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Ngữ pháp tiếng anh nâng cao (3)", "Thực hành ngữ âm và âm vị học tiếng anh (3)", "Tiếng hàn sơ cấp 1 (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Viết tiếng anh học thuật (3)", "Kỹ năng đọc tư duy phản biện tiếng anh (3)", "Tiếng hàn sơ cấp 2 (3)", "Giáo dục thể chất 3 (2)", "Nói trước công chúng (3)"],
+        "Kỳ 3": ["Đất nước học Hàn Quốc (3)", "Tiếng Hàn sơ cấp 3 (6)", "Tiếng Hàn sơ cấp 4 (6)"],
+        "Kỳ 4": ["Dẫn luận ngôn ngữ học tiếng Hàn (3)", "Tiếng Hàn trung cấp 1 (6)", "Tiếng Hàn trung cấp 2 (6)"],
+        "Kỳ 5": ["Viết tiếng Hàn học thuật (3)", "Thực hành tiếng Hàn nâng cao (3)", "Tiếng hàn trung cấp 3 (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần thứ 1 của combo (3)", "Tiếng Hàn cao cấp 1 (3)", "Đọc dịch tiếng Hàn (3)", "Trải nghiệm khởi nghiệp 1 (3)"],
+        "Kỳ 8": ["Học phần thứ 2 của combo (3)", "Học phần thứ 3 của combo (3)", "Học phần thứ 4 của combo (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Học phần tốt nghiệp lựa chọn ngành ngôn ngữ Hàn (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "ti_ng_h_n_th_ng_m_i": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "Nhạc cụ truyền thống (3)", "Nhập Môn tiếng Hàn (0)"],
+        "Kỳ 1": ["Luật và đạo đức kinh doanh (3)", "Tiếng hàn sơ cấp 1 (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)", "Kinh tế vi mô (3)"],
+        "Kỳ 2": ["Kinh tế vĩ mô (3)", "Kỹ năng viết học thuật (3)", "Tiếng hàn sơ cấp 2 (3)", "Giáo dục thể chất 3 (2)", "Nguyên Lý Marketing (3)"],
+        "Kỳ 3": ["Nhập môn quản lý Logistic và chuỗi cung ứng (3)", "Tiếng Hàn sơ cấp 3 (6)", "Tiếng Hàn sơ cấp 4 (6)"],
+        "Kỳ 4": ["Địa lý kinh tế Hàn quốc (3)", "Tiếng Hàn trung cấp 1 (6)", "Tiếng Hàn trung cấp 2 (6)"],
+        "Kỳ 5": ["Văn hóa doanh nghiệp Hàn quốc (3)", "Tiếng Hàn truyền thông và logistics (3)", "Tiếng hàn trung cấp 3 (6)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Phương pháp nghiên cứu khoa học (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần thứ 1 của combo (3)", "Tiếng Hàn cao cấp 1 (3)", "Tiếng Hàn thương mại(3)", "Trải nghiệm khởi nghiệp 1 (3)"],
+        "Kỳ 8": ["Học phần thứ 2 của combo (3)", "Học phần thứ 3 của combo (3)", "Học phần thứ 4 của combo (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Học phần tốt nghiệp lựa chọn ngành ngôn ngữ Hàn Quốc (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "ng_n_ng_trung_qu_c": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+        "Kỳ 1": ["Tiếng trung tổng hợp 1 (3)", "Tiếng trung tổng hợp 2 (3)", "Khẩu ngữ tiếng trung 1 (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Tiếng trung tổng hợp 3 (3)", "Khẩu ngữ tiếng trung 2 (6)", "Thực hành ngữ âm và âm vị học tiếng Anh (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Tiếng trung tổng hợp 4 (3)", "tiếng trung tổng hợp 5 (3)", "Khẩu ngữ tiếng trung 3 (6)", "Kỹ năng đọc tư duy phản biện tiếng anh (3)", "Ngữ pháp tiếng anh nâng cao (3)"],
+        "Kỳ 4": ["Tiếng trung tổng hợp 6 (6)", "Khẩu ngữ tiếng trung 4 (6)", "Ngữ âm - Từ vựng - Hán tự (3)", "Viết tiếng anh học thuật (3)"],
+        "Kỳ 5": ["Đất nước học trung quốc (3)", "Ngữ pháp tiếng Trung Quốc (3)", "Khẩu ngữ tiếng trung 5 (6)", "Biên - Phiên dịch (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần thứ 1 của combo (3)", "Học phần thứ 2 của combo (3)", "Phương pháp nghiên cứu (3)", "Nói trước công chúng (3)", "Trải nghiệm khởi nghiệp 1 (3)"],
+        "Kỳ 8": ["Học phần thứ 3 của combo (3)", "Học phần thứ 4 của combo (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Học phần tốt nghiệp lựa chọn ngành ngôn ngữ Trung Quốc (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "ti_ng_trung_th_ng_m_i": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "Nhạc cụ truyền thống (3)", "Tiếng trung tiền đề (0)"],
+        "Kỳ 1": ["Tiếng trung quốc tổng hợp 1 (3)", "Tiếng trung quốc tổng hợp 2 (3)", "Kỹ năng nghe - nói tiếng Trung Quốc 1 (3)", "Kỹ năng đọc - viết Trung Quốc 1 (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Tiếng trung quốc tổng hợp 3 (3)", "Tiếng trung quốc tổng hợp 4 (3)", "Kỹ năng nghe - nói tiếng Trung Quốc 2 (3)", "Kỹ năng đọc - viết Trung Quốc 2 (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Kỹ năng nghe nhìn nói tiếng Trung Quốc nâng cao 1 (3)", "Tiếng Trung tổng hợp thương mại 1 (3)", "Tiếng trung quốc tổng hợp 5 (3)", "Kỹ năng nghe - nói tiếng Trung Quốc 3 (3)", "Kỹ năng đọc - viết Trung Quốc 3 (3)"],
+        "Kỳ 4": ["Kỹ năng nghe nhìn nói tiếng Trung Quốc nâng cao 2 (3)", "Biên - Phiên dịch 1 (3)", "Tiếng Trung tổng hợp thương mại 2 (3)", "Tiếng Trung Quốc về đàm phán thương mại quốc tế (3)", "Ngữ âm - Từ vựng - Hán tự (3)", "Nhập môn thương mại điện tử (3)"],
+        "Kỳ 5": ["Tiếng Trung Quốc thư tín thương mại (3)", "Văn hóa trong giao tiếp thương mại (3)", "Đất nước học Trung Quốc (3)", "Biên - Phiên dịch 2 (3)", "Ngữ pháp tiếng Trung quốc (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần thứ 1 của combo (3)", "Học phần thứ 2 của combo (3)", "Tiếng Trung Quốc Kinh tế vĩ mô (3)", "Tiếng Trung Quốc Kinh tế vi mô (3)", "Trải nghiệm khởi nghiệp 1 (3)"],
+        "Kỳ 8": ["Học phần thứ 3 của combo (3)", "Học phần thứ 4 của combo (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Học phần tốt nghiệp lựa chọn ngành ngôn ngữ Trung Quốc (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "tr__tu__nh_n_t_o": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎻 Đàn nhị (3)"],
+        "Kỳ 1": ["Nhập môn khoa học máy tính (3)", "Toán rời rạc (3)", "Toán cho ngành kỹ thuật (3)", "Cơ sở lập trình với Python (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Trí tuệ nhân tạo (3)", "Tổ chức và Kiến trúc máy tính (3)", "Cấu trúc dữ liệu và giải thuật với Python (3)", "Các hệ cơ sở dữ liệu (3)", "A1.1_Tiếng Nhật sơ cấp 1-A1.1 (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["TTNT và KHDL với Python và SQL (3)", "Đạo đức trong CNTT (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Toán cho học máy (3)", "Xác suất thống kê (3)"],
+        "Kỳ 4": ["Học máy (3)", "Thị giác máy tính (3)", "Dự án TTNT-KHDL (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Nhập môn kĩ thuật phần mềm (3)"],
+        "Kỳ 5": ["Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Học sâu (6)", "Phát triển Web với Python (3)", "Xử lý ngôn ngữ tự nhiên (3)"],
+        "Kỳ 6": ["Xử lý ngôn ngữ tự nhiên (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần 3 của combo* (3)", "Phát triển UDTTNT với TensorFlow (3)", "Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Trải nghiệm khởi nghiệp 1 (3)", "Project Management (3)"],
+        "Kỳ 8": ["Học phần 4 của combo* (3)", "Thiết kế sản phẩm TTNT (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Học tăng cường (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Trí tuệ nhân tạo (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "an_to_n_th_ng_tin": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎺 Kèn bầu (3)"],
+        "Kỳ 1": ["Tổ chức và Kiến trúc máy tính (3)", "Nhập môn khoa học máy tính (3)", "Toán cho ngành kỹ thuật (3)", "Cơ sở lập trình với Python (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Lập trình hướng đối tượng với Python (3)", "Internet vạn vật (3)", "Toán rời rạc (3)", "Mạng máy tính (3)", "Hệ điều hành (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Cấu trúc dữ liệu và giải thuật với Python (3)", "Các hệ cơ sở dữ liệu (3)", "IA Học phần lựa chọn 2 (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Kết nối mạng (3)"],
+        "Kỳ 4": ["Tri tuệ nhân tạo cho An ninh mạng (3)", "Đạo đức trong CNTT (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Xác suất thống kê (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Mật mã ứng dụng (3)", "Điều tra số (3)", "Quản trị rủi ro trong hệ thống thông tin (3)", "Phân tích mã độc và kỹ thuật dịch ngược (3)", "Phát triển Web với Python (3)"],
+        "Kỳ 6": ["Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Thâm nhập thử và phòng thủ (3)", "Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Phát triển chính sách an toàn thông tin (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Học phần 3 của combo* (3)", "Học phần 4 của combo* (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành An Toàn Thông Tin (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "vi_m_ch_b_n_d_n": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn bầu (3)"],
+        "Kỳ 1": ["Tổ chức và Kiến trúc máy tính (3)", "Toán cho ngành kỹ thuật (3)", "Giáo dục thể chất 2 (2)", "Cơ sở lập trình (3)", "Nhập môn thiết bị bán dẫn (3)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Hán ngữ sơ cấp 1 (3)", "Kỹ thuật mạch (3)", "Toán rời rạc (3)", "Mạng máy tính (3)", "Hệ điều hành (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Hán ngữ sơ cấp 2 (3)", "Data structures and algorithms (In C++) (3)", "Kỹ thuật số (3)", "Xác suất thống kê (3)", "Lập trình Vi Điều Khiển (3)"],
+        "Kỳ 4": ["Dự án thiết kế mạch (3)", "Lý thuyết trường điện từ và siêu cao tần (3)", "Lập trình FPGA (3)", "Measurement and Control Engineering (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Digital Signal Processing (3)", "Học phần thứ 1 của combo* (3)", "IC Design Introduction (3)", "Linux và Mã nguồn mở (3)", "Nhập môn kĩ thuật phần mềm (3)"],
+        "Kỳ 6": ["Đào tạo trong môi trường thực tế (10)", "Project Management (3)"],
+        "Kỳ 7": ["Thiết kế mạch tích hợp tương tự (3)", "Thiết kế mạch tích hợp số (3)", "Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Trải nghiệm khởi nghiệp 1 (3)", "Học phần thứ 2 của combo* (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Học phần 3 của combo* (3)", "Học phần 4 của combo* (3)", "Thiết kế mạch tích hợp tín hiệu hỗn hợp (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Vi mạch bán dẫn (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "c_ng_ngh____t__s_": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🪗 Phong cầm (3)"],
+        "Kỳ 1": ["Nhập môn ô tô (3)", "Nhập môn kỹ thuật điện-điện tử (3)", "Toán cho ngành kỹ thuật (3)", "Giáo dục thể chất 2 (2)", "Cơ sở lập trình (3)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Tiếng Nhật sơ cấp 1-A1.1 (3)", "Toán rời rạc (3)", "Mạng máy tính (3)", "Hệ điều hành (3)", "Lập trình C++ (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Data structures and algorithms (In C++) (3)", "Kỹ thuật số (3)", "Hệ thống nhúng (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Xác suất thống kê (3)"],
+        "Kỳ 4": ["Hệ thống điện-điện tử trên ô tô (3)", "Hệ thống nhúng nâng cao (3)", "Kỹ thuật đo lường và điều khiển (3)", "Thực hành hệ thống nhúng (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Học phần 1 của combo* (3)", "Digital Signal Processing (3)", "Linux and Open Source Platform (3)", "Mô hình và mô phỏng (3)", "Nhập môn kĩ thuật phần mềm (3)"],
+        "Kỳ 6": ["Đào tạo trong môi trường thực tế (10)", "Project Management (3)"],
+        "Kỳ 7": ["Hệ thống truyền thông trong ô tô (3)", "Học phần 2 của combo* (3)", "Học phần 3 của combo* (3)", "Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Trải nghiệm khởi nghiệp 1 (3)"],
+        "Kỳ 8": ["Học phần 4 của combo* (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Liên kết thông minh ngoài xe (3)", "Phần mềm & tiêu chuẩn lập trình ô tô (3)"],
+        "Kỳ 9": ["Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Công nghệ ô tô số (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "thi_t_k____h_a_v__m__thu_t_s_": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🥁 Trống cơm (3)"],
+        "Kỳ 1": ["Hình họa - Vẽ đầu tượng, chân dung (3)", "Hình họa - Vẽ khối, tĩnh vật (3)", "Công cụ thiết kế trực quan (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)", "Nguyên lý thị giác (3)"],
+        "Kỳ 2": ["Elective 1_Học phần lựa chọn 1 (3)", "Elective 2_Học phần lựa chọn 2 (3)", "Lịch sử mỹ thuật VN &TG (3)", "Nhiếp ảnh (3)", "Giáo dục thể chất 3 (2)", "Phối cảnh (3)"],
+        "Kỳ 3": ["Phát triển ý tưởng và kịch bản (3)", "Vẽ kỹ thuật số (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Phương pháp nghiên cứu cho nhà thiết kế (3)", "Đồ họa chữ và bố cục cơ bản (3)"],
+        "Kỳ 4": ["Thiết kế nhân vật (3)", "Nguyên lý chuyển động (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Đồ họa chữ và thiết kế ấn bản điện tử (3)", "UI/UX Design (3)"],
+        "Kỳ 5": ["Nguyên lý truyền thông và quảng cáo (3)", "Thiết kế hình ảnh và âm thanh (3)", "Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Học phần 3 của combo* (3)", "Học phần 4 của combo* (3)", "Sản xuất âm thanh (3)", "Cơ sở văn hóa Việt Nam (3)"],
+        "Kỳ 8": ["Mỹ học đại cương (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Học phần 5 của combo* (3)", "Lịch sử thiết kế (2)", "Luật sở hữu trí tuệ (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)"],
+        "Kỳ 9": ["Học phần lựa chọn tốt nghiệp chuyên ngành Thiết kế mỹ thuật số (10)", "Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      // Ngành Công nghệ thông tin - IT
+      "c_ng_ngh_th_ng_tin_it": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎹 Đàn piano (3)"],
+        "Kỳ 1": ["Tổ chức và Kiến trúc máy tính (3)", "Nhập môn khoa học máy tính (3)", "Toán cho ngành kỹ thuật (3)", "Giáo dục thể chất 2 (2)", "Cơ sở lập trình (3)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Toán rời rạc (3)", "Mạng máy tính (3)", "Hệ điều hành (3)", "Giáo dục thể chất 3 (2)", "Lập trình hướng đối tượng (3)", "Thiết kế web (3)"],
+        "Kỳ 3": ["Các hệ cơ sở dữ liệu (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Thực hành OOP với Java (3)", "Xác suất thống kê (3)", "Lập trình hướng đối tượng (3)", "Nhập môn kỹ thuật phần mềm (3)"],
+        "Kỳ 4": ["Cấu trúc dữ liệu và giải thuật (3)", "Internet vạn vật (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Phát triển ứng dụng Java web (2)", "Yêu cầu phần mềm (3)"],
+        "Kỳ 5": ["Học phần 1 của combo* (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Dự án phát triển phần mềm (3)", "Kiểm thử phần mềm (3)", "Thiết kế trải nghiệm người dùng (3)"],
+        "Kỳ 6": ["Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Project Management (3)", "Học phần 2 của combo* (3)", "Học phần 3 của combo* (3)", "Kiến trúc và thiết kế phần mềm (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Đạo đức trong CNTT (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Lập trình di động (3)", "Học phần 4 của combo SE (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Công nghệ thông tin (10)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      // Hệ thống thông tin
+      "h_th_ng_th_ng_tin": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎺 Kèn đồng (3)"],
+        "Kỳ 1": ["Tổ chức và Kiến trúc máy tính (3)", "Nhập môn khoa học máy tính (3)", "Toán cho ngành kỹ thuật (3)", "Giáo dục thể chất 2 (2)", "Cơ sở lập trình (3)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Toán rời rạc (3)", "Mạng máy tính (3)", "Hệ điều hành (3)", "Giáo dục thể chất 3 (2)", "Lập trình hướng đối tượng (3)", "Thiết kế web (3)"],
+        "Kỳ 3": ["Các hệ cơ sở dữ liệu (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Thực hành OOP với Java (3)", "Xác suất thống kê (3)", "Lập trình hướng đối tượng (3)", "Nhập môn kỹ thuật phần mềm (3)"],
+        "Kỳ 4": ["Cấu trúc dữ liệu và giải thuật (3)", "Internet vạn vật (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Phát triển ứng dụng Java web (2)", "Yêu cầu phần mềm (3)"],
+        "Kỳ 5": ["Học phần 1 của combo* (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Dự án phát triển phần mềm (3)", "Kiểm thử phần mềm (3)", "Thiết kế trải nghiệm người dùng (3)"],
+        "Kỳ 6": ["Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Project Management (3)", "Học phần 2 của combo* (3)", "Học phần 3 của combo* (3)", "Kiến trúc và thiết kế phần mềm (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Đạo đức trong CNTT (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Lập trình di động (3)", "Học phần 4 của combo SE (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Hệ thống thông tin (10)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      // Ngành công nghệ truyền thông
+      "truy_n_th_ng_a_ph_ng_ti_n": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎸 Guitar (3)"],
+        "Kỳ 1": ["Nhập môn truyền thông đa phương tiện (3)", "Nguyên lý thiết kế (3)", "Màu sắc và thiết kế (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)", "Vẽ nền tảng (3)"],
+        "Kỳ 2": ["Nhiếp ảnh cơ bản (3)", "Thiết kế đồ họa cơ bản (3)", "Video sản xuất cơ bản (3)", "Giáo dục thể chất 3 (2)", "Kỹ năng viết sáng tạo (3)", "Lịch sử truyền thông (3)"],
+        "Kỳ 3": ["Thiết kế web cơ bản (3)", "Marketing trực tuyến (3)", "Sản xuất video nâng cao (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Quan hệ công chúng (3)"],
+        "Kỳ 4": ["Thiết kế đồ họa nâng cao (3)", "Social Media Marketing (3)", "Content Strategy (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Branding cơ bản (3)"],
+        "Kỳ 5": ["UI/UX Design (3)", "Digital Marketing (3)", "Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Học phần 3 của combo* (3)", "Học phần 4 của combo* (3)", "Media Planning (3)", "Cơ sở văn hóa Việt Nam (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Học phần 5 của combo* (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)", "Portfolio Development (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Truyền thông đa phương tiện (10)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "quan_h_c_ng_ng_i": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎻 Violin (3)"],
+        "Kỳ 1": ["Nhập môn quan hệ công chúng (3)", "Nguyên lý thiết kế (3)", "Màu sắc và thiết kế (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)", "Vẽ nền tảng (3)"],
+        "Kỳ 2": ["Nhiếp ảnh cơ bản (3)", "Thiết kế đồ họa cơ bản (3)", "Video sản xuất cơ bản (3)", "Giáo dục thể chất 3 (2)", "Kỹ năng viết sáng tạo (3)", "Lịch sử truyền thông (3)"],
+        "Kỳ 3": ["Thiết kế web cơ bản (3)", "Marketing trực tuyến (3)", "Sản xuất video nâng cao (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Quan hệ công chúng nâng cao (3)"],
+        "Kỳ 4": ["Thiết kế đồ họa nâng cao (3)", "Social Media Marketing (3)", "Content Strategy (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Branding cơ bản (3)"],
+        "Kỳ 5": ["UI/UX Design (3)", "Digital Marketing (3)", "Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Học phần 3 của combo* (3)", "Học phần 4 của combo* (3)", "Media Planning (3)", "Cơ sở văn hóa Việt Nam (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Học phần 5 của combo* (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)", "Portfolio Development (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Quan hệ công chúng (10)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "truy_n_th_ng_marketing_t_ch_h_p": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tì bà (3)"],
+        "Kỳ 1": ["Nhập môn truyền thông đa phương tiện (3)", "Nguyên lý thiết kế (3)", "Màu sắc và thiết kế (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)", "Vẽ nền tảng (3)"],
+        "Kỳ 2": ["Nhiếp ảnh cơ bản (3)", "Thiết kế đồ họa cơ bản (3)", "Video sản xuất cơ bản (3)", "Giáo dục thể chất 3 (2)", "Kỹ năng viết sáng tạo (3)", "Lịch sử truyền thông (3)"],
+        "Kỳ 3": ["Thiết kế web cơ bản (3)", "Marketing trực tuyến (3)", "Sản xuất video nâng cao (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Quan hệ công chúng (3)"],
+        "Kỳ 4": ["Thiết kế đồ họa nâng cao (3)", "Social Media Marketing (3)", "Content Strategy (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Branding cơ bản (3)"],
+        "Kỳ 5": ["UI/UX Design (3)", "Digital Marketing (3)", "Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Học phần 3 của combo* (3)", "Học phần 4 của combo* (3)", "Media Planning (3)", "Cơ sở văn hóa Việt Nam (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Học phần 5 của combo* (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)", "Portfolio Development (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Truyền thông Marketing tích hợp (10)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "truy_n_th_ng_th_u_hi_u": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn đáy (3)"],
+        "Kỳ 1": ["Nhập môn truyền thông đa phương tiện (3)", "Nguyên lý thiết kế (3)", "Màu sắc và thiết kế (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)", "Vẽ nền tảng (3)"],
+        "Kỳ 2": ["Nhiếp ảnh cơ bản (3)", "Thiết kế đồ họa cơ bản (3)", "Video sản xuất cơ bản (3)", "Giáo dục thể chất 3 (2)", "Kỹ năng viết sáng tạo (3)", "Lịch sử truyền thông (3)"],
+        "Kỳ 3": ["Thiết kế web cơ bản (3)", "Marketing trực tuyến (3)", "Sản xuất video nâng cao (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Quan hệ công chúng (3)"],
+        "Kỳ 4": ["Thiết kế đồ họa nâng cao (3)", "Social Media Marketing (3)", "Content Strategy (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Branding cơ bản (3)"],
+        "Kỳ 5": ["UI/UX Design (3)", "Digital Marketing (3)", "Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Học phần 3 của combo* (3)", "Học phần 4 của combo* (3)", "Media Planning (3)", "Cơ sở văn hóa Việt Nam (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Học phần 5 của combo* (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)", "Portfolio Development (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Truyền thông thương hiệu (10)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      // Các ngành Quản trị kinh doanh còn thiếu
+      "qu_n_tr_gi_tr_i_v_s__ki_n": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tỳ bà (3)"],
+        "Kỳ 1": ["Nguyên lý Marketing (3)", "Tổng quan ngành du lịch và khách sạn (3)", "Tiếng anh Chuyên ngành Khách sạn - Du lịch Trung cấp 1 (3)", "Nhập môn quản lí (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Nguyên lí kế toán (3)", "Tiếng anh Chuyên ngành Khách sạn - Du lịch Trung cấp 2 (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Quản trị vận hành khách sạn (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Các vấn đề đương đại ngành khách sạn, du lịch (3)", "Quản trị nhân sự (3)", "Môi trường kinh doanh (3)", "Địa Lý du lịch (3)", "Quản trị và đàm phán trong môi trường đa văn hóa (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Tổ chức sự kiện (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Quản trị dịch vụ ăn uống (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Học phần 1 của combo (3)", "Học phần 2 của combo (3)", "Marketing mạng xã hội (3)", "Học phần 3 của combo (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Quản trị trải nghiệm khách hàng(3)", "Quản trị doanh thu khách sạn (3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)", "Học phần 4 của combo (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Luật và Đạo đức kinh doanh (3)", "Phương pháp nghiên cứu (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Hotel Management (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "qu_n_tr_thu_mua": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn gáo (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Môi trường kinh doanh (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Nhập môn quản lý Logistics và chuỗi cung ứng (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Thương mại quốc tế (3)", "Quản trị nhân sự (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Quản trị vận tải quốc tế (3)", "Thu mua toàn cầu (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Vận tải hàng hóa bằng đường hàng không (3)", "Vận tải, giao nhận hàng hóa bằng đường biển(3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Khai báo hải quan điện tử (3)", "Hàng hóa và bảo hiểm(3)", "Hệ thống ERP: khái niệm và thực hành với SAP_ERP System(3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "GL_COM*1 -- Option 1 (3)", "GL_COM*1 -- Option 2 (3)", "GL_COM*1 -- Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "GL_COM*1 -- Option 4 (3)", "Phương pháp nghiên cứu và phân tích định lượng (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Graduation Elective (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "qu_n_tr_kh_ch_s_n": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn cò (3)"],
+        "Kỳ 1": ["Nguyên lý Marketing (3)", "Tổng quan ngành du lịch và khách sạn (3)", "Tiếng anh Chuyên ngành Khách sạn - Du lịch Trung cấp 1 (3)", "Nhập môn quản lí (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Nguyên lí kế toán (3)", "Tiếng anh Chuyên ngành Khách sạn - Du lịch Trung cấp 2 (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Quản trị vận hành khách sạn (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Các vấn đề đương đại ngành khách sạn, du lịch (3)", "Quản trị nhân sự (3)", "Môi trường kinh doanh (3)", "Địa Lý du lịch (3)", "Quản trị và đàm phán trong môi trường đa văn hóa (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Tổ chức sự kiện (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Quản trị dịch vụ ăn uống (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Học phần 1 của combo (3)", "Học phần 2 của combo (3)", "Marketing mạng xã hội (3)", "Học phần 3 của combo (3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Quản trị trải nghiệm khách hàng(3)", "Quản trị doanh thu khách sạn (3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)", "Học phần 4 của combo (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Luật và Đạo đức kinh doanh (3)", "Phương pháp nghiên cứu (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Hotel Management (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "ph_n_t_ch_kinh_doanh_business_analytics": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tam thập lục (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Môi trường kinh doanh (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Nhập môn quản lý Logistics và chuỗi cung ứng (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Thương mại quốc tế (3)", "Quản trị nhân sự (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Quản trị vận tải quốc tế (3)", "Thu mua toàn cầu (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Vận tải hàng hóa bằng đường hàng không (3)", "Vận tải, giao nhận hàng hóa bằng đường biển(3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Khai báo hải quan điện tử (3)", "Hàng hóa và bảo hiểm(3)", "Hệ thống ERP: khái niệm và thực hành với SAP_ERP System(3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "GL_COM*1 -- Option 1 (3)", "GL_COM*1 -- Option 2 (3)", "GL_COM*1 -- Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "GL_COM*1 -- Option 4 (3)", "Phương pháp nghiên cứu và phân tích định lượng (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Graduation Elective (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "logistics_v_qu_n_l_chu_i_cung_ng_to_n_c_u": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn hồ lô (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Môi trường kinh doanh (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Nhập môn quản lý Logistics và chuỗi cung ứng (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Thương mại quốc tế (3)", "Quản trị nhân sự (3)", "Thống kê ứng dụng trong kinh doanh (3)", "Quản trị vận tải quốc tế (3)", "Thu mua toàn cầu (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong kinh doanh (3)", "Hán ngữ sơ cấp 1 (3)", "Vận tải hàng hóa bằng đường hàng không (3)", "Vận tải, giao nhận hàng hóa bằng đường biển(3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Khai báo hải quan điện tử (3)", "Hàng hóa và bảo hiểm(3)", "Hệ thống ERP: khái niệm và thực hành với SAP_ERP System(3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "GL_COM*1 -- Option 1 (3)", "GL_COM*1 -- Option 2 (3)", "GL_COM*1 -- Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "GL_COM*1 -- Option 4 (3)", "Phương pháp nghiên cứu và phân tích định lượng (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Graduation Elective (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "t_i_ch_nh_doanh_nghi_p": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn nguyệt cầm (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Kinh tế vi mô (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Kinh tế vĩ mô (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Kế toán quản trị (3)", "KInh tế tiền tệ và kinh tế toàn cầu (3)", "tài chính doanh nghiệp nâng cao (3)", "Quản trị nhân sự (3)", "Thống kê ứng dụng trong kinh doanh (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong dịch vụ tài chính (3)", "Hán ngữ sơ cấp 1 (3)", "Thị trường tài chính và các định chế tài chính (3)", "Phân tích báo cáo tài chính (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Mô hình tài chính(3)", "Công cụ phái sinh (3)", "Phương pháp nghiên cứu và phân tích định lượng (3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "Investment Finance_Option 1 (3)", "Investment Finance_Option 2 (3)", "Investment Finance_Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Investment Finance_Option 4 (3)", "Thẩm định dự án đầu tư (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Finance(10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "t_i_ch_nh_th_ng_minh": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn kim (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Kinh tế vi mô (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Kinh tế vĩ mô (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Kế toán quản trị (3)", "KInh tế tiền tệ và kinh tế toàn cầu (3)", "tài chính doanh nghiệp nâng cao (3)", "Quản trị nhân sự (3)", "Thống kê ứng dụng trong kinh doanh (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong dịch vụ tài chính (3)", "Hán ngữ sơ cấp 1 (3)", "Thị trường tài chính và các định chế tài chính (3)", "Phân tích báo cáo tài chính (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Mô hình tài chính(3)", "Công cụ phái sinh (3)", "Phương pháp nghiên cứu và phân tích định lượng (3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "Investment Finance_Option 1 (3)", "Investment Finance_Option 2 (3)", "Investment Finance_Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Investment Finance_Option 4 (3)", "Thẩm định dự án đầu tư (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Finance(10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "t_i_ch_nh_ng_h_ng": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn đáy (3)"],
+        "Kỳ 1": ["Nguyên lí kế toán (3)", "Kinh tế vi mô (3)", "Tiếng anh thương mại- cấp 1 (3)", "Nhập môn quản lý (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Kinh tế vĩ mô (3)", "Tiếng anh thương mại - Cấp 2 (3)", "Tài chính doanh nghiệp (3)", "Nguyên lý Marketing (3)", "Hành vi tổ chức (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Kế toán quản trị (3)", "KInh tế tiền tệ và kinh tế toàn cầu (3)", "tài chính doanh nghiệp nâng cao (3)", "Quản trị nhân sự (3)", "Thống kê ứng dụng trong kinh doanh (3)"],
+        "Kỳ 4": ["Chuyển đổi số trong dịch vụ tài chính (3)", "Hán ngữ sơ cấp 1 (3)", "Thị trường tài chính và các định chế tài chính (3)", "Phân tích báo cáo tài chính (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Hán ngữ sơ cấp 2 (3)", "Mô hình tài chính(3)", "Công cụ phái sinh (3)", "Phương pháp nghiên cứu và phân tích định lượng (3)", "Kỹ năng giao tiếp nâng cao trong kinh doanh(3)"],
+        "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Luật và đạo đức kinh doanh (3)", "Investment Finance_Option 1 (3)", "Investment Finance_Option 2 (3)", "Investment Finance_Option 3 (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Investment Finance_Option 4 (3)", "Thẩm định dự án đầu tư (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Finance(10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      // Ngành Cử nhân tài năng
+      "tr__tu__nh_n_t_o_v_khoa_h_c_d_li_u": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn bầu (3)"],
+        "Kỳ 1": ["Nhập môn khoa học máy tính (3)", "Toán rời rạc (3)", "Toán cho ngành kỹ thuật (3)", "Cơ sở lập trình với Python (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Trí tuệ nhân tạo (3)", "Tổ chức và Kiến trúc máy tính (3)", "Cấu trúc dữ liệu và giải thuật với Python (3)", "Các hệ cơ sở dữ liệu (3)", "A1.1_Tiếng Nhật sơ cấp 1-A1.1 (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["TTNT và KHDL với Python và SQL (3)", "Đạo đức trong CNTT (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Toán cho học máy (3)", "Xác suất thống kê (3)"],
+        "Kỳ 4": ["Học máy (3)", "Thị giác máy tính (3)", "Dự án TTNT-KHDL (3)", "Kỹ năng giao tiếp và cộng tác (3)", "Nhập môn kĩ thuật phần mềm (3)"],
+        "Kỳ 5": ["Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Học sâu (6)", "Phát triển Web với Python (3)", "Xử lý ngôn ngữ tự nhiên (3)"],
+        "Kỳ 6": ["Xử lý ngôn ngữ tự nhiên (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Học phần 3 của combo* (3)", "Phát triển UDTTNT với TensorFlow (3)", "Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Trải nghiệm khởi nghiệp 1 (3)", "Project Management (3)"],
+        "Kỳ 8": ["Học phần 4 của combo* (3)", "Thiết kế sản phẩm TTNT (3)", "Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Học tăng cường (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành Trí tuệ nhân tạo và Khoa học dữ liệu (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      },
+      "an_minh_m_ng_v_an_to_n_s_": {
+        "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tỳ bà (3)"],
+        "Kỳ 1": ["Tổ chức và Kiến trúc máy tính (3)", "Nhập môn khoa học máy tính (3)", "Toán cho ngành kỹ thuật (3)", "Cơ sở lập trình với Python (3)", "Giáo dục thể chất 2 (2)", "Kỹ năng học thuật (3)"],
+        "Kỳ 2": ["Lập trình hướng đối tượng với Python (3)", "Internet vạn vật (3)", "Toán rời rạc (3)", "Mạng máy tính (3)", "Hệ điều hành (3)", "Giáo dục thể chất 3 (2)"],
+        "Kỳ 3": ["Cấu trúc dữ liệu và giải thuật với Python (3)", "Các hệ cơ sở dữ liệu (3)", "IA Học phần lựa chọn 2 (3)", "Tiếng Nhật sơ cấp 1-A1.1 (3)", "Kết nối mạng (3)"],
+        "Kỳ 4": ["Tri tuệ nhân tạo cho An ninh mạng (3)", "Đạo đức trong CNTT (3)", "Tiếng Nhật sơ cấp 1-A1.2 (3)", "Xác suất thống kê (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+        "Kỳ 5": ["Mật mã ứng dụng (3)", "Điều tra số (3)", "Quản trị rủi ro trong hệ thống thông tin (3)", "Phân tích mã độc và kỹ thuật dịch ngược (3)", "Phát triển Web với Python (3)"],
+        "Kỳ 6": ["Phương pháp nghiên cứu & Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+        "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Thâm nhập thử và phòng thủ (3)", "Học phần 1 của combo* (3)", "Học phần 2 của combo* (3)", "Phát triển chính sách an toàn thông tin (3)"],
+        "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Học phần 3 của combo* (3)", "Học phần 4 của combo* (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Project Management (3)"],
+        "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Học phần lựa chọn Đồ án tốt nghiệp chuyên ngành An minh mạng và an toàn số (10)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)"]
+      }
+    };
+    if (Object.keys(DB.fileTree).length === 0) {
+      Object.keys(seedData).forEach(majorId => {
+        DB.fileTree[majorId] = { id: majorId, name: majorId, type: 'folder', children: [] };
+        Object.keys(seedData[majorId]).forEach((ky, i) => {
+          let kyId = majorId + '_ky_' + i;
+          let kyNode = { id: kyId, name: ky, type: 'folder', children: [] };
+          seedData[majorId][ky].forEach((mon, j) => {
+            let monId = kyId + '_m_' + j;
+            kyNode.children.push({
+              id: monId, name: mon, type: 'folder', children: [
+                { id: monId + '_f1', name: 'Yêu cầu môn học', type: 'file', url: '#' },
+                { id: monId + '_f2', name: 'Đề thi tham khảo', type: 'file', url: '#' }
+              ]
+            });
+          });
+          DB.fileTree[majorId].children.push(kyNode);
+        });
+      });
+      persist();
+    } else {
+      // Update existing majors with new data if they don't have children OR force update specific majors
+      Object.keys(seedData).forEach(majorId => {
+        if (!DB.fileTree[majorId] || !DB.fileTree[majorId].children || DB.fileTree[majorId].children.length === 0) {
+          DB.fileTree[majorId] = { id: majorId, name: majorId, type: 'folder', children: [] };
+          Object.keys(seedData[majorId]).forEach((ky, i) => {
+            let kyId = majorId + '_ky_' + i;
+            let kyNode = { id: kyId, name: ky, type: 'folder', children: [] };
+            seedData[majorId][ky].forEach((mon, j) => {
+              let monId = kyId + '_m_' + j;
+              kyNode.children.push({
+                id: monId, name: mon, type: 'folder', children: [
+                  { id: monId + '_f1', name: 'Yêu cầu môn học', type: 'file', url: '#' },
+                  { id: monId + '_f2', name: 'Đề thi tham khảo', type: 'file', url: '#' }
+                ]
+              });
+            });
+            DB.fileTree[majorId].children.push(kyNode);
+          });
+        }
+      });
+      persist();
+    }
+    
+    // Force update school events if empty
+    if (DB.schoolPosts.length === 1 && DB.schoolPosts[0].title === 'Spring Festival FPT Đà Nẵng 2025') {
+      DB.schoolPosts = [];
+      persist();
+      location.reload();
+    }
+    
+    // Force refresh function - add to window for manual trigger
+    window.forceRefreshAllData = function() {
+      localStorage.clear();
+      location.reload();
+    };
+    
+    // Force update existing majors with new data
+    Object.keys(seedData).forEach(majorId => {
+      if (!DB.fileTree[majorId] || !DB.fileTree[majorId].children || DB.fileTree[majorId].children.length === 0) {
+        DB.fileTree[majorId] = { id: majorId, name: majorId, type: 'folder', children: [] };
+        Object.keys(seedData[majorId]).forEach((ky, i) => {
+          let kyId = majorId + '_ky_' + i;
+          let kyNode = { id: kyId, name: ky, type: 'folder', children: [] };
+          seedData[majorId][ky].forEach((mon, j) => {
+            let monId = kyId + '_m_' + j;
+            kyNode.children.push({
+              id: monId, name: mon, type: 'folder', children: [
+                { id: monId + '_f1', name: 'Yêu cầu môn học', type: 'file', url: '#' },
+                { id: monId + '_f2', name: 'Đề thi tham khảo', type: 'file', url: '#' }
+              ]
+            });
+          });
+          DB.fileTree[majorId].children.push(kyNode);
+        });
+      }
+    });
+
+    // ENSURE ALL MAJORS FROM MAJORS ARRAY EXIST IN seedData
+    console.log('Checking for missing majors...');
+    const allMajorNames = [];
+    MAJORS.forEach(group => {
+      group.subs.forEach(majorName => {
+        allMajorNames.push(majorName);
+        const majorId = slugify(majorName);
+        
+        if (!seedData[majorId]) {
+          console.log('MISSING MAJOR:', majorName, 'ID:', majorId);
+          
+          // Add default curriculum for missing majors
+          seedData[majorId] = {
+            "Kỳ 0": ["Định hướng và Rèn luyện tập trung (0)", "Tiếng Anh chuẩn bị (0)", "Giáo dục thể chất 1 (2)", "🎵 Đàn tranh (3)"],
+            "Kỳ 1": ["Kỹ năng học thuật (3)", "Giáo dục thể chất 2 (2)", "Môn chuyên ngành 1 (3)", "Môn chuyên ngành 2 (3)", "Môn cơ sở 1 (3)"],
+            "Kỳ 2": ["Giáo dục thể chất 3 (2)", "Môn chuyên ngành 3 (3)", "Môn chuyên ngành 4 (3)", "Môn cơ sở 2 (3)", "Môn cơ sở 3 (3)"],
+            "Kỳ 3": ["Môn chuyên ngành 5 (3)", "Môn chuyên ngành 6 (3)", "Môn chuyên ngành 7 (3)", "Kỹ năng giao tiếp và cộng tác (3)"],
+            "Kỳ 4": ["Môn chuyên ngành 8 (3)", "Môn chuyên ngành 9 (3)", "Môn chuyên ngành 10 (3)", "Môn cơ sở 4 (3)"],
+            "Kỳ 5": ["Môn chuyên ngành 11 (3)", "Môn chuyên ngành 12 (3)", "Môn chuyên ngành 13 (3)", "Môn chuyên ngành 14 (3)"],
+            "Kỳ 6": ["Kỹ năng viết học thuật (3)", "Đào tạo trong môi trường thực tế (10)"],
+            "Kỳ 7": ["Trải nghiệm khởi nghiệp 1 (3)", "Môn chuyên ngành 15 (3)", "Môn chuyên ngành 16 (3)", "Môn chuyên ngành 17 (3)"],
+            "Kỳ 8": ["Trải nghiệm khởi nghiệp 2 (3)", "Triết học Mác - Lê-nin (3)", "Kinh tế chính trị Mác - Lê-nin (2)", "Đạo đức trong công việc (3)", "Môn chuyên ngành 18 (3)"],
+            "Kỳ 9": ["Tư tưởng Hồ Chí Minh (2)", "Chủ nghĩa xã hội khoa học (2)", "Lịch sử Đảng Cộng sản Việt Nam (2)", "Học phần tốt nghiệp (10)"]
+          };
+          
+          console.log('Added default curriculum for:', majorName);
+        }
+      });
+    });
+
+    console.log('Total majors in MAJORS array:', allMajorNames.length);
+    console.log('Total majors in seedData:', Object.keys(seedData).length);
+    console.log('Missing majors resolved!');
+    
+    // REBUILD FILETREE FOR ALL MAJORS TO ENSURE COMPLETE DATA
+    console.log('Rebuilding fileTree with all majors...');
+    MAJORS.forEach(group => {
+      group.subs.forEach(majorName => {
+        const majorId = slugify(majorName);
+        
+        if (seedData[majorId]) {
+          // Force rebuild this major in fileTree
+          DB.fileTree[majorId] = { id: majorId, name: majorName, type: 'folder', children: [] };
+          
+          Object.keys(seedData[majorId]).forEach((ky, i) => {
+            let kyId = majorId + '_ky_' + i;
+            let kyNode = { id: kyId, name: ky, type: 'folder', children: [] };
+            
+            seedData[majorId][ky].forEach((mon, j) => {
+              let monId = kyId + '_m_' + j;
+              kyNode.children.push({
+                id: monId, name: mon, type: 'folder', children: [
+                  { id: monId + '_f1', name: 'Yêu cầu môn học', type: 'file', url: '#' },
+                  { id: monId + '_f2', name: 'Đề thi tham khảo', type: 'file', url: '#' }
+                ]
+              });
+            });
+            
+            DB.fileTree[majorId].children.push(kyNode);
+          });
+          
+          console.log('Rebuilt major:', majorName, 'with', Object.keys(seedData[majorId]).length, 'semesters');
+        }
+      });
+    });
+    
+    persist();
+    console.log('FileTree rebuild complete!');
+    
+    console.log('FUDAPath loaded. Majors in seedData:', Object.keys(seedData));
+    console.log('School posts count:', DB.schoolPosts.length);
+    console.log('Total majors in DB.fileTree:', Object.keys(DB.fileTree).length);
+
+    // ============================================================
+    // AUTO-LOGIN AND INITIALIZATION
+    // ============================================================
+    
+    // Check for saved user session and auto-login
+    function checkAutoLogin() {
+      const savedUser = localStorage.getItem('fp2_current_user');
+      if (savedUser) {
+        try {
+          CU = JSON.parse(savedUser);
+          isAdmin = CU.alias === 'NOVA';
+          document.getElementById('auth-screen').style.display = 'none';
+          document.getElementById('app').style.display = 'block';
+          document.getElementById('user-display').textContent = CU.alias;
+          document.getElementById('welcome-name').textContent = CU.alias;
+          if (isAdmin) {
+            document.getElementById('admin-badge').style.display = 'inline-flex';
+            document.getElementById('abroad-post-form').classList.add('visible');
+          }
+          console.log('Auto-login successful for:', CU.alias);
+          return true;
+        } catch (e) {
+          console.log('Invalid saved session, clearing...');
+          localStorage.removeItem('fp2_current_user');
+        }
+      }
+      return false;
+    }
+
+    // Save user session
+    function saveUserSession() {
+      if (CU) {
+        localStorage.setItem('fp2_current_user', JSON.stringify(CU));
+      }
+    }
+
+    // Modify enterApp to save session
+    const originalEnterApp = window.enterApp;
+    window.enterApp = function() {
+      originalEnterApp();
+      saveUserSession();
+    };
+
+    // Modify logout to clear session
+    window.logout = function() {
+      CU = null;
+      isAdmin = false;
+      localStorage.removeItem('fp2_current_user');
+      document.getElementById('auth-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+      switchTab('login');
+    };
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Try auto-login first
+      if (!checkAutoLogin()) {
+        // Show auth screen if no auto-login
+        document.getElementById('auth-screen').style.display = 'flex';
+        document.getElementById('app').style.display = 'none';
+      }
+      
+      // Show chat bubble after a short delay for effect
+      setTimeout(() => {
+        const toggle = document.getElementById('chat-toggle');
+        if (toggle) {
+          toggle.style.display = 'flex';
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+
+</html>
